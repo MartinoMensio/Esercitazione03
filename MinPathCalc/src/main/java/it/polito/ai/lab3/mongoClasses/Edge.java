@@ -1,4 +1,4 @@
-package it.polito.ai.lab3.model;
+package it.polito.ai.lab3.mongoClasses;
 
 /**
  * Questa classe non rappresenta l'arco di un grafo,
