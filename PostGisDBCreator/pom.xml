@@ -40,7 +40,7 @@
 						<configuration>
 							<!-- exclude junit, we need runtime dependency only -->
 							<includeScope>runtime</includeScope>
-							<outputDirectory>${project.build.directory}/libd/</outputDirectory>
+							<outputDirectory>${project.build.directory}/lib/</outputDirectory>
 						</configuration>
 					</execution>
 				</executions>
