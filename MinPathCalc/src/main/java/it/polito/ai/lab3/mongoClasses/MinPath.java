@@ -29,6 +29,12 @@ public class MinPath {
 	 * */
 	private int totalCost;
 	
+	public MinPath(String idSource, String idDestination, List<Edge> edges) {
+		this.idSource = idSource;
+		this.idDestination = idDestination;
+		this.edges = edges;
+	}
+	
 	public String getIdSource() {
 		return idSource;
 	}
