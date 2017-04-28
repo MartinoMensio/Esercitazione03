@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.*;
 
 import it.polito.ai.lab3.mongoClasses.Edge;
 
@@ -17,37 +18,37 @@ import it.polito.ai.lab3.mongoClasses.Edge;
 public class Graph {
 	private int myNumNodes;
 	private int myNumEdges;
-	private static Map<String,Node> myNodes;
-	private static Map<Node, Set<Edge>> myAdjList;
+	private static ConcurrentMap<String, Node> myNodes;
+	private static ConcurrentMap<String, Set<Edge>> myAdjList;
 
 	public Graph() {
-		myAdjList = new HashMap<Node, Set<Edge>>();
-		myNodes = new HashMap<String, Node>();
+		myAdjList = new ConcurrentHashMap<String, Set<Edge>>();
+		myNodes = new ConcurrentHashMap<String, Node>();
 		myNumNodes = 0;
 		myNumEdges = 0;
 	}
 
 	public void addNode (Node myNode) {
-		String myNodeName = myNode.getName();
-		myNodes.put(myNodeName, myNode);
-		myAdjList.put(myNode, new HashSet<Edge>());
+		String myNodeId = myNode.getId();
+		myNodes.put(myNodeId, myNode);
+		myAdjList.put(myNodeId, new HashSet<Edge>());
 		myNumNodes += 1; 
 	}
 
 	public void addNode (Node myNode, Set<Edge> myEdgeList) {
-		String myNodeName = myNode.getName();
-		myNodes.put(myNodeName, myNode);
-		myAdjList.put(myNode, myEdgeList);
+		String myNodeId = myNode.getId();
+		myNodes.put(myNodeId, myNode);
+		myAdjList.put(myNodeId, myEdgeList);
 		myNumNodes += 1; 
 		myNumEdges += myEdgeList.size();
 
 	}
 
 	// Aggiunge la lista di edge ad un nodo esistente
-	public void addEdges (String name, Set<Edge> myEdgeList) {
-		Node myNode = myNodes.get(name);
+	public void addEdges (String sourceId, Set<Edge> myEdgeList) {
+		Node myNode = myNodes.get(sourceId);
 		if(myNode != null){
-			myAdjList.put(myNode, myEdgeList);
+			myAdjList.get(sourceId).addAll(myEdgeList);
 			myNumEdges += myEdgeList.size();
 		}
 	}
@@ -56,16 +57,16 @@ public class Graph {
 		return myNumEdges;
 	}
 
-	public void setMyNumEdges(int myNumEdges) {
-		this.myNumEdges = myNumEdges;
-	}
-
 	public int getMyNumNodes() {
 		return myNumNodes;
 	}
 
-	public void setMyNumNodes(int myNumNodes) {
-		this.myNumNodes = myNumNodes;
+	public Set<String> getNodes() {
+		return myNodes.keySet();
+	}
+	
+	public Set<Edge> getEdges(String sourceId) {
+		return myAdjList.get(sourceId);
 	}
 
 }
