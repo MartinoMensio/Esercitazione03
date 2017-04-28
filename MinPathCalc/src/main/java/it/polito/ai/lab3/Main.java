@@ -1,6 +1,11 @@
 package it.polito.ai.lab3;
 
+import java.util.Map;
 import java.util.Set;
+
+import it.polito.ai.lab3.model.*;
+import it.polito.ai.lab3.mongoClasses.MinPath;
+import it.polito.ai.lab3.mongoClasses.Edge;
 
 public class Main {
 
@@ -8,16 +13,48 @@ public class Main {
 		// TODO Auto-generated method stub
 		DbReader dbReader = new DbReader();
 		
-		for (String s: dbReader.getBusStops()) {
-			System.out.println("bus stop: " + s);
+		Graph graph = new Graph();
+		
+		System.out.println("Reading stops from database..");
+		
+		Set<Node> busStops = dbReader.getBusStops();
+		
+		System.out.println("Reading edges from database (should take around 1 minute)...");
+		// single thread implementation
+		for (Node node : busStops) {
+			Set<Edge> byBus = dbReader.getReachableStopsByBus(node);
+			Set<Edge> byWalk = dbReader.getReachableStopsByWalk(node);
+			
+			graph.addNode(node);
+			graph.addEdges(node.getId(), byBus);
+			graph.addEdges(node.getId(), byWalk);
 		}
 		
-		// some stupid testing, to see if it works
-		Set<String> result = dbReader.getReachableStopsByWalk(45.0626559,7.6788946);
-		System.out.println("got some results for stations near 45.00996,7.66691: " + result.size());
+		System.out.println("The graph contains " + graph.getMyNumNodes() + " nodes and " + graph.getMyNumEdges() + " edges");
 		
-		Set<String> result2 = dbReader.getReachableStopsByBus("40", 45.0626559,7.6788946);
-		System.out.println("got some results for stations reachable from 40 (porta nuova): " + result2.size());
+		Dijsktra dijkstra = new Dijsktra(graph);
+		
+		System.out.println("Going to run Dijkstra from each node (should take around 15 min)...");
+		
+		/*
+		// SERIAL
+		for (String node : graph.getNodes()) {
+			System.out.println("Calculating for node " + node);
+			// evaluate the minimum path for every stop starting from this node
+			Map<String, MinPath> tmp = dijkstra.shortestPath(node);
+			
+		}
+		*/
+		
+		// PARALLEL
+		graph.getNodes().parallelStream().forEach(node -> {
+			// evaluate the minimum path for every stop starting from this node
+			Map<String, MinPath> tmp = dijkstra.shortestPath(node);
+		});
+		
+		// TODO store the found paths
+		
+		System.out.println("Done");
 	}
 
 }
