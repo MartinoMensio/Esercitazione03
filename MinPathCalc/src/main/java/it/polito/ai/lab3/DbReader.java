@@ -28,15 +28,15 @@ where ST_Distance(location, MY_LOCATION) < 250"
 
  */
 public class DbReader {
-	
-	private static int WALK_WEIGHT = 10;
-	private static int BUS_WEIGHT = 1;
+
+	private final static int WALK_WEIGHT = 10;
+	private final static int BUS_WEIGHT = 1;
 
 	private Connection connection;
 
-	private String getBusStops = "select id, name, ST_Y(location::geometry) as lng, ST_X(location::geometry) as lat from busStopGeographic";
-	private String getReachableStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from BusStopGeographic where id in (select a.stopId from BusLineStop a, BusLineStop b where a.lineId=b.lineId and b.stopId=?)";
-	private String getNearbyStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from busStopGeographic where ST_Distance(location, ST_GeographyFromText(?)) < 250";
+	private final static String getBusStops = "select id, name, ST_Y(location::geometry) as lng, ST_X(location::geometry) as lat from busStopGeographic";
+	private final static String getReachableStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from BusStopGeographic where id in (select a.stopId from BusLineStop a, BusLineStop b where a.lineId=b.lineId and b.stopId=?)";
+	private final static String getNearbyStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from busStopGeographic where ST_Distance(location, ST_GeographyFromText(?)) < 250";
 
 	private PreparedStatement getBusStopsStmt;
 	private PreparedStatement getReachableStopsStmt;
@@ -110,7 +110,7 @@ public class DbReader {
 				while (rs.next()) {
 					String id = rs.getString("id");
 					double distance = rs.getDouble("distance");
-					result.add(new Edge(srcNode.getId(), id,true, (int)distance * WALK_WEIGHT));
+					result.add(new Edge(srcNode.getId(), id, true, (int) distance * WALK_WEIGHT));
 				}
 			} finally {
 				rs.close();
@@ -138,7 +138,7 @@ public class DbReader {
 				while (rs.next()) {
 					String id = rs.getString("id");
 					double distance = rs.getDouble("distance");
-					result.add(new Edge(srcNode.getId(), id, false, (int)distance * BUS_WEIGHT));
+					result.add(new Edge(srcNode.getId(), id, false, (int) distance * BUS_WEIGHT));
 				}
 			} finally {
 				rs.close();
@@ -147,5 +147,20 @@ public class DbReader {
 			throw new RuntimeException(e);
 		}
 		return result;
+	}
+
+	/**
+	 * release resources
+	 */
+	public void close() {
+		try {
+			getBusStopsStmt.close();
+			getNearbyStopsStmt.close();
+			getReachableStopsStmt.close();
+			connection.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+
 	}
 }
