@@ -4,6 +4,9 @@ import java.nio.file.*;
 import java.sql.*;
 import java.util.*;
 
+import it.polito.ai.lab3.mongoClasses.Edge;
+import it.polito.ai.lab3.model.Node;
+
 /*
 
 - lista fermate con posizione "select id,ST_X(location::geometry) as lng, ST_X(location::geography) as lat from busStopGeographic"
@@ -25,10 +28,13 @@ where ST_Distance(location, MY_LOCATION) < 250"
 
  */
 public class DbReader {
+	
+	private static int WALK_WEIGHT = 10;
+	private static int BUS_WEIGHT = 1;
 
 	private Connection connection;
 
-	private String getBusStops = "select id,ST_Y(location::geometry) as lng, ST_X(location::geometry) as lat from busStopGeographic";
+	private String getBusStops = "select id, name, ST_Y(location::geometry) as lng, ST_X(location::geometry) as lat from busStopGeographic";
 	private String getReachableStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from BusStopGeographic where id in (select a.stopId from BusLineStop a, BusLineStop b where a.lineId=b.lineId and b.stopId=?)";
 	private String getNearbyStops = "select id, ST_Distance(location, ST_GeographyFromText(?)) as distance from busStopGeographic where ST_Distance(location, ST_GeographyFromText(?)) < 250";
 
@@ -66,18 +72,17 @@ public class DbReader {
 	 * 
 	 * @return
 	 */
-	public Set<String> getBusStops() {
-		// TODO use proper type
-		Set<String> result = new HashSet<String>();
+	public Set<Node> getBusStops() {
+		Set<Node> result = new HashSet<Node>();
 		try {
 			ResultSet rs = getBusStopsStmt.executeQuery();
 			try {
 				while (rs.next()) {
 					String id = rs.getString("id");
+					String name = rs.getString("name");
 					Double lat = rs.getDouble("lat");
 					Double lng = rs.getDouble("lng");
-					// TODO build object of proper type;
-					result.add(id + ":" + lat + "," + lng);
+					result.add(new Node(id, name, lat, lng));
 				}
 			} finally {
 				rs.close();
@@ -94,21 +99,18 @@ public class DbReader {
 	 * @param source
 	 * @return
 	 */
-	public Set<String> getReachableStopsByWalk(double sourceLat, double sourceLng) {
-		// TODO use proper type
-		Set<String> result = new HashSet<String>();
+	public Set<Edge> getReachableStopsByWalk(Node srcNode) {
+		Set<Edge> result = new HashSet<Edge>();
 		try {
-			// TODO get source position
-			String position = "SRID=4326;POINT(" + sourceLat + " " + sourceLng + ")";
+			String position = "SRID=4326;POINT(" + srcNode.getLat() + " " + srcNode.getLng() + ")";
 			getNearbyStopsStmt.setString(1, position);
 			getNearbyStopsStmt.setString(2, position);
 			ResultSet rs = getNearbyStopsStmt.executeQuery();
 			try {
 				while (rs.next()) {
 					String id = rs.getString("id");
-					Double distance = rs.getDouble("distance");
-					// TODO build object of proper type
-					result.add(id + ":" + distance);
+					double distance = rs.getDouble("distance");
+					result.add(new Edge(srcNode.getId(), id,true, (int)distance * WALK_WEIGHT));
 				}
 			} finally {
 				rs.close();
@@ -125,21 +127,18 @@ public class DbReader {
 	 * @param source
 	 * @return
 	 */
-	public Set<String> getReachableStopsByBus(String sourceId, double sourceLat, double sourceLng) {
-		// TODO use proper type
-		Set<String> result = new HashSet<String>();
+	public Set<Edge> getReachableStopsByBus(Node srcNode) {
+		Set<Edge> result = new HashSet<Edge>();
 		try {
-			// TODO get source position
-			String position = "SRID=4326;POINT(" + sourceLat + " " + sourceLng + ")";
+			String position = "SRID=4326;POINT(" + srcNode.getLat() + " " + srcNode.getLng() + ")";
 			getReachableStopsStmt.setString(1, position);
-			getReachableStopsStmt.setString(2, sourceId);
+			getReachableStopsStmt.setString(2, srcNode.getId());
 			ResultSet rs = getReachableStopsStmt.executeQuery();
 			try {
 				while (rs.next()) {
 					String id = rs.getString("id");
-					Double distance = rs.getDouble("distance");
-					// TODO build object of proper type
-					result.add(id + ":" + distance);
+					double distance = rs.getDouble("distance");
+					result.add(new Edge(srcNode.getId(), id, false, (int)distance * BUS_WEIGHT));
 				}
 			} finally {
 				rs.close();

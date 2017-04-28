@@ -28,6 +28,13 @@ public class Edge {
 	 * */
 	private int cost;
 	
+	public Edge(String idSource, String idDestination, boolean mode, int cost) {
+		this.idSource = idSource;
+		this.idDestination = idDestination;
+		this.mode = mode;
+		this.cost = cost;
+	}
+	
 	public String getIdSource() {
 		return idSource;
 	}
