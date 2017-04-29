@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.*;
 import it.polito.ai.lab3.entities.*;
 
 @Controller
-@RequestMapping({ "/", "/home" })
+@RequestMapping({"/", "/home", "/index"})
 public class HomeController {
 
 	TestEntity testEntity;

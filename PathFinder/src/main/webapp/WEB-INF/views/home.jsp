@@ -1,16 +1,29 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
-<html>
-<head>
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<title>Insert title here</title>
-</head>
-<body>
-	<div>
-		<h1>${test}</h1>
-	</div>
-	<h5>${greeting}</h5>
-</body>
-</html>
+<%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+
+<t:template>
+
+	<jsp:attribute name="header">
+        <%@include file="../components/navbar.jsp"%>
+    </jsp:attribute>
+	<jsp:attribute name="footer">
+        <div id="pagefooter" class="row">
+            <%@include file="../components/footer.jsp"%>
+        </div>
+    </jsp:attribute>
+
+	<jsp:body>
+	    <div style="padding-top: 50px;">
+		    <h1>Home page</h1>
+            <p>Welcome to the Bus Line website!</p>
+        </div>
+        <div>
+			<h1>${test}</h1>
+		</div>
+		<h5>${greeting}</h5>
+	    
+	    <br> <br> <br> <br>
+    </jsp:body>
+
+</t:template>
