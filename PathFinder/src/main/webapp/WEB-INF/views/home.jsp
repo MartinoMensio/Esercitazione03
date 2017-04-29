@@ -18,10 +18,6 @@
 		    <h1>Home page</h1>
             <p>Welcome to the Bus Line website!</p>
         </div>
-        <div>
-			<h1>${test}</h1>
-		</div>
-		<h5>${greeting}</h5>
 	    
 	    <br> <br> <br> <br>
     </jsp:body>
