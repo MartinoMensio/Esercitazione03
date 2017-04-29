@@ -37,7 +37,10 @@ public class MongoWriter {
 
 		Document document = new Document("idSource", minPath.getIdSource())
 				.append("idDestination", minPath.getIdDestination()).append("edges", edges)
-				.append("totalCost", minPath.getTotalCost());
+				.append("totalCost", minPath.getTotalCost())
+				// enable faster lookup by defining the primary key as
+				// combination of src and dst ids
+				.append("_id", new Document("src", minPath.getIdSource()).append("dst", minPath.getIdDestination()));
 
 		minPathsCollection.insertOne(document);
 	}
