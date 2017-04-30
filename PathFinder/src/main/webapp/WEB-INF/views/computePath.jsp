@@ -1,5 +1,6 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
@@ -7,62 +8,6 @@
 <t:template>
     <jsp:attribute name="header">
         <%@include file="../components/navbar.jsp"%>
-        
-        <script type="text/javascript">
-	        function addMarker(e) {
-	            var srcLat = document.getElementById("srcLat");
-	            var srcLng = document.getElementById("srcLng");
-	            var dstLat = document.getElementById("dstLat");
-	            var dstLng = document.getElementById("dstLng");
-	
-	            if (srcPointFilled == false) {
-	                // set the form fields and set the filled var
-	                srcLat.setAttribute("value", e.latlng.lat);
-	                srcLng.setAttribute("value", e.latlng.lng);
-	                srcPointFilled = true;
-	
-	                // show the marker
-	                srcPointMarker = new L.marker(e.latlng).addTo(mymap);
-	            }
-	            else if (dstPointFilled == false) {
-	                // set the form fields and set the filled var
-	                dstLat.setAttribute("value", e.latlng.lat);
-	                dstLng.setAttribute("value", e.latlng.lng);
-	                dstPointFilled = true;
-	
-	                // show the marker
-	                dstPointMarker = new L.marker(e.latlng).addTo(mymap);
-	            }
-	        }
-	
-	        function submitForm(form) {
-	            if (srcPointFilled == true && dstPointFilled == true) {
-	                form.submit();
-	            }
-	            else {
-	                alert("Per calcolare il percorso selezionare prima due punti sulla mappa");
-	            }
-	        }
-	
-	        function resetForm()
-	        {
-	            // reset form fields
-	            srcLat.setAttribute("value", "");
-	            srcLng.setAttribute("value", "");
-	            dstLat.setAttribute("value", "");
-	            dstLng.setAttribute("value", "");
-	
-	            // reset the filled var
-	            srcPointFilled = false;
-	            dstPointFilled = false;
-	
-	            // remove the markers
-	            mymap.removeLayer(srcPointMarker);
-	            mymap.removeLayer(dstPointMarker);
-	
-	            return false;
-	        }
-	    </script>
     </jsp:attribute>
 	<jsp:attribute name="footer">
         <div id="pagefooter" class="row">
@@ -76,6 +21,62 @@
             <p>Selezionare due punti sulla mappa come sorgente e destinazione del percorso da calcolare</p>
             
             <div id="mapid" style="width: 100%; height: 400px;"></div>
+            
+            <script type="text/javascript">
+		        function addMarker(e) {
+		            var srcLat = document.getElementById("srcLat");
+		            var srcLng = document.getElementById("srcLng");
+		            var dstLat = document.getElementById("dstLat");
+		            var dstLng = document.getElementById("dstLng");
+		
+		            if (srcPointFilled == false) {
+		                // set the form fields and set the filled var
+		                srcLat.setAttribute("value", e.latlng.lat);
+		                srcLng.setAttribute("value", e.latlng.lng);
+		                srcPointFilled = true;
+		
+		                // show the marker
+		                srcPointMarker = new L.marker(e.latlng).addTo(mymap);
+		            }
+		            else if (dstPointFilled == false) {
+		                // set the form fields and set the filled var
+		                dstLat.setAttribute("value", e.latlng.lat);
+		                dstLng.setAttribute("value", e.latlng.lng);
+		                dstPointFilled = true;
+		
+		                // show the marker
+		                dstPointMarker = new L.marker(e.latlng).addTo(mymap);
+		            }
+		        }
+		
+		        function submitForm(form) {
+		            if (srcPointFilled == true && dstPointFilled == true) {
+		                form.submit();
+		            }
+		            else {
+		                alert("Per calcolare il percorso selezionare prima due punti sulla mappa");
+		                return false;
+		            }
+		        }
+		
+		        function resetForm() {
+		            // reset form fields
+		            srcLat.setAttribute("value", "");
+		            srcLng.setAttribute("value", "");
+		            dstLat.setAttribute("value", "");
+		            dstLng.setAttribute("value", "");
+		
+		            // reset the filled var
+		            srcPointFilled = false;
+		            dstPointFilled = false;
+		
+		            // remove the markers
+		            mymap.removeLayer(srcPointMarker);
+		            mymap.removeLayer(dstPointMarker);
+		
+		            return false;
+		        }
+		    </script>
 
             <script>
 	            var srcPointFilled = false;
@@ -101,16 +102,13 @@
             </script>
         </div>
         
-        <form action="resultPath" method="POST">
-        	<input id="srcLat" name="srcLat" type="text" value="" hidden="true"/>
-	        <input id="srcLng" name="srcLng" type="text" value="" hidden="true"/>
-	        <input id="dstLat" name="dstLat" type="text" value="" hidden="true"/>
-	        <input id="dstLng" name="dstLng" type="text" value="" hidden="true"/>
-	        <input type="button" value="Calcola percorso" onclick="return submitForm(this.form);"/>
-	        <input type="button" value="Cancella" onclick="return resetForm();"/>
-        </form>
+        <form:form action="computePath" method="post" modelAttribute="srcDstPoints">
+        	<form:hidden id="srcLat" path="srcLat"/>
+	        <form:hidden id="srcLng" path="srcLng"/>
+	        <form:hidden id="dstLat" path="dstLat"/>
+	        <form:hidden id="dstLng" path="dstLng"/>
+	        <form:button onclick="return submitForm(this.form);">Calcola percorso</form:button>
+	        <form:button onclick="return resetForm();">Cancella</form:button>
+        </form:form>
     </jsp:body>
-    
-    
-
 </t:template>
