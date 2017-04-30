@@ -31,7 +31,8 @@ where ST_Distance(location, MY_LOCATION) < 250"
  */
 public class DbReader {
 
-	private final static int WALK_WEIGHT = 10;
+	private final static int RIDE_PENALTY = 500; // going on a bus has penalty
+	private final static int WALK_WEIGHT = 5;
 	private final static int BUS_WEIGHT = 1;
 
 	private ComboPooledDataSource cpds;
@@ -228,7 +229,7 @@ public class DbReader {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		return lenght * BUS_WEIGHT;
+		return lenght * BUS_WEIGHT + RIDE_PENALTY;
 	}
 	
 	public Connection getConnection() {
