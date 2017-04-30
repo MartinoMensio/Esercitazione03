@@ -4,6 +4,8 @@ import java.nio.file.*;
 import java.sql.*;
 import java.util.*;
 
+import com.mchange.v2.c3p0.ComboPooledDataSource;
+
 import it.polito.ai.lab3.mongoClasses.Edge;
 import it.polito.ai.lab3.model.Node;
 
@@ -32,6 +34,7 @@ public class DbReader {
 	private final static int WALK_WEIGHT = 10;
 	private final static int BUS_WEIGHT = 1;
 
+	private ComboPooledDataSource cpds;
 	private Connection connection;
 
 	private final static String getBusStops = "SELECT id, name, ST_Y(location::geometry) AS lng, ST_X(location::geometry) AS lat "
@@ -48,14 +51,12 @@ public class DbReader {
 			+ "WHERE bls.lineId=? AND bls.sequenceNumber>=? AND BLS.sequenceNumber<=? AND bsg.id=bls.stopId";
 
 	private PreparedStatement getBusStopsStmt;
-	private PreparedStatement getReachableStopsStmt;
-	private PreparedStatement getNearbyStopsStmt;
 	private PreparedStatement getBusLinesStopsStmt;
-	private PreparedStatement getSequenceLengthStmt;
 
 	public DbReader() {
 		try {
-			Class.forName("org.postgresql.Driver");
+			cpds = new ComboPooledDataSource();
+			cpds.setDriverClass("org.postgresql.Driver");
 
 			String server = null;
 			try {
@@ -66,14 +67,14 @@ public class DbReader {
 				server = "localhost";
 			}
 
-			connection = DriverManager.getConnection("jdbc:postgresql://" + server + ":5432/trasporti", "postgres",
-					"ai-user-password");
+			cpds.setJdbcUrl("jdbc:postgresql://" + server + ":5432/trasporti");
+			cpds.setUser("postgres");
+			cpds.setPassword("ai-user-password");
+			cpds.setMaxStatements(Runtime.getRuntime().availableProcessors());
+			connection = cpds.getConnection();
 			// read-only, so don't need transactions
 			getBusStopsStmt = connection.prepareStatement(getBusStops);
-			getReachableStopsStmt = connection.prepareStatement(getReachableStops);
-			getNearbyStopsStmt = connection.prepareStatement(getNearbyStops);
 			getBusLinesStopsStmt = connection.prepareStatement(getBusLinesStops);
-			getSequenceLengthStmt = connection.prepareStatement(getSequenceLength);
 		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException(e);
@@ -142,9 +143,11 @@ public class DbReader {
 	 * @param source
 	 * @return
 	 */
-	public Set<Edge> getReachableStopsByWalk(Node srcNode) {
+	public Set<Edge> getReachableStopsByWalk(Connection connection, Node srcNode) {
+		PreparedStatement getNearbyStopsStmt;
 		Set<Edge> result = new HashSet<Edge>();
 		try {
+			getNearbyStopsStmt = connection.prepareStatement(getNearbyStops);
 			String position = "SRID=4326;POINT(" + srcNode.getLat() + " " + srcNode.getLng() + ")";
 			getNearbyStopsStmt.setString(1, position);
 			getNearbyStopsStmt.setString(2, position);
@@ -157,6 +160,7 @@ public class DbReader {
 				}
 			} finally {
 				rs.close();
+				getNearbyStopsStmt.close();
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -170,9 +174,11 @@ public class DbReader {
 	 * @param source
 	 * @return
 	 */
-	public Set<Edge> getReachableStopsByBus(Node srcNode) {
+	public Set<Edge> getReachableStopsByBus(Connection connection, Node srcNode) {
+		PreparedStatement getReachableStopsStmt;
 		Set<Edge> result = new HashSet<Edge>();
 		try {
+			getReachableStopsStmt = connection.prepareStatement(getReachableStops);
 			getReachableStopsStmt.setString(1, srcNode.getId());
 			ResultSet rs = getReachableStopsStmt.executeQuery();
 			try {
@@ -184,6 +190,7 @@ public class DbReader {
 				}
 			} finally {
 				rs.close();
+				getReachableStopsStmt.close();
 			}
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
@@ -201,9 +208,11 @@ public class DbReader {
 	 * @param dstSequenceNumber
 	 * @return
 	 */
-	public double getSequenceCost(String lineId, int srcSequenceNumber, int dstSequenceNumber) {
+	public double getSequenceCost(Connection connection, String lineId, int srcSequenceNumber, int dstSequenceNumber) {
 		double lenght;
 		try {
+			PreparedStatement getSequenceLengthStmt = connection.prepareStatement(getSequenceLength);
+			
 			getSequenceLengthStmt.setString(1, lineId);
 			getSequenceLengthStmt.setInt(2, srcSequenceNumber);
 			getSequenceLengthStmt.setInt(3, dstSequenceNumber);
@@ -213,11 +222,29 @@ public class DbReader {
 				lenght = rs.getDouble("length");
 			} finally {
 				rs.close();
+				getSequenceLengthStmt.close();
 			}
+			getSequenceLengthStmt.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
 		return lenght * BUS_WEIGHT;
+	}
+	
+	public Connection getConnection() {
+		try {
+			return cpds.getConnection();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+	}
+	
+	public void closeConnection(Connection c) {
+		try {
+			c.close();
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
 	}
 
 	/**
@@ -226,8 +253,6 @@ public class DbReader {
 	public void close() {
 		try {
 			getBusStopsStmt.close();
-			getNearbyStopsStmt.close();
-			getReachableStopsStmt.close();
 			connection.close();
 		} catch (SQLException e) {
 			throw new RuntimeException(e);

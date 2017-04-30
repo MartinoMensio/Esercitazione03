@@ -1,5 +1,6 @@
 package it.polito.ai.lab3;
 
+import java.sql.Connection;
 import java.util.*;
 
 import it.polito.ai.lab3.model.*;
@@ -8,7 +9,10 @@ import it.polito.ai.lab3.mongoClasses.*;
 public class Main {
 
 	public static void main(String[] args) {
-		DbReader dbReader = new DbReader();
+		
+		printTime("starting");
+		
+		final DbReader dbReader = new DbReader();
 		Graph graph = new Graph();
 
 		System.out.println("Reading stops from database..");
@@ -16,10 +20,11 @@ public class Main {
 		Map<String, Map<String, List<Integer>>> busLinesStops = dbReader.getBusLinesStops();
 
 		System.out.println("Reading edges from database (should take around 1 minute)...");
-		for (Node node : busStops) {
-			Set<Edge> byBus = dbReader.getReachableStopsByBus(node);
-			Set<Edge> byWalk = dbReader.getReachableStopsByWalk(node);
-
+		busStops.parallelStream().forEach(node -> {
+			Connection connection = dbReader.getConnection();
+			Set<Edge> byBus = dbReader.getReachableStopsByBus(connection, node);
+			Set<Edge> byWalk = dbReader.getReachableStopsByWalk(connection, node);
+			
 			for (Edge edge : byBus) {
 				Map<String, List<Integer>> busLineStops = busLinesStops.get(edge.getLineId());
 				// search the interesting sub-sequences
@@ -31,7 +36,7 @@ public class Main {
 					if(destination.isPresent()) {
 						int destinationSequenceNumber = destination.getAsInt();
 						// get the cost of this candidate sub-sequence
-						double cost = dbReader.getSequenceCost(edge.getLineId(), sourceSequenceNumber, destinationSequenceNumber);
+						double cost = dbReader.getSequenceCost(connection, edge.getLineId(), sourceSequenceNumber, destinationSequenceNumber);
 						if (cost < minCost) {
 							// this is the shortest
 							minCost = cost;
@@ -39,19 +44,23 @@ public class Main {
 					}
 				}
 				edge.setCost((int)minCost);
-				System.out.println("found cost between " + edge.getIdSource() + " and " + edge.getIdDestination() + " : " + edge.getCost());
-			}
+				//System.out.println("found cost between " + edge.getIdSource() + " and " + edge.getIdDestination() + " : " + edge.getCost());
+			};
+			
+			dbReader.closeConnection(connection);
 
 			graph.addNode(node);
 			graph.addEdges(node.getId(), byBus);
 			graph.addEdges(node.getId(), byWalk);
-		}
+		});
+		
+		printTime("done with postgis");
 
 		System.out.println(
 				"The graph contains " + graph.getMyNumNodes() + " nodes and " + graph.getMyNumEdges() + " edges");
 
 		dbReader.close();
-		dbReader = null;
+		//dbReader = null;
 
 		Dijsktra dijkstra = new Dijsktra(graph);
 
@@ -79,8 +88,14 @@ public class Main {
 				});
 
 		mongoWriter.close();
+		
+		printTime("done");
 
 		System.out.println("Done");
+	}
+	
+	static void printTime(String msg) {
+		System.out.println(new Date() + "\t" + msg);
 	}
 
 }
