@@ -32,7 +32,9 @@ public class MongoWriter {
 
 		for (Edge edge : minPath.getEdges()) {
 			edges.add(new Document("idSource", edge.getIdSource()).append("idDestination", edge.getIdDestination())
-					.append("mode", edge.isMode()).append("cost", edge.getCost()));
+					.append("mode", edge.isMode()).append("cost", edge.getCost())
+					// also store the lineId useful for displaying solution
+					.append("lineId", edge.getLineId()));
 		}
 
 		Document document = new Document("idSource", minPath.getIdSource())
