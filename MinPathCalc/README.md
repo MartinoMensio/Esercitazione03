@@ -40,9 +40,8 @@ FROM busStopGeographic
 ### Read the stopId and sequenceNumber
 
 ```
-SELECT stopId, sequenceNumber
+SELECT lineIstopId, sequenceNumber
 FROM BusLineStop
-WHERE lineId=?
 ```
 
 ### Get stations in range of 250m from a given BusStop
@@ -56,18 +55,15 @@ WHERE ST_Distance(location, ST_GeographyFromText(?)) < 250
 ### Get stations reachable by using one bus from a given BusStop
 
 ```
-SELECT id as distance
-FROM BusStopGeographic
-WHERE id in (
-  SELECT a.stopId
-  FROM BusLineStop a, BusLineStop b
-  WHERE a.lineId=b.lineId AND b.stopId=?)
+SELECT c.id, a.lineId AS lineId
+FROM BusLineStop a, BusLineStop b, BusStopGeographic c
+WHERE a.lineId=b.lineId AND b.stopId=? AND a.stopId=c.id
 ```
 
 ### Evaluate length of a sequence given start seq number and end seq number and line number
 
 ```
-SELECT st_Length(ST_MakeLine(bsg.location::geometry ORDER BY bls.sequenceNumber)::geography)
+SELECT st_Length(ST_MakeLine(bsg.location::geometry ORDER BY bls.sequenceNumber)::geography) AS length
 FROM BusStopGeographic bsg, BusLineStop bls
 WHERE bls.lineId=? AND bls.sequenceNumber>=? AND BLS.sequenceNumber<=? AND bsg.id=bls.stopId
 ```

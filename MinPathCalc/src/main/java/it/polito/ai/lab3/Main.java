@@ -13,11 +13,34 @@ public class Main {
 
 		System.out.println("Reading stops from database..");
 		Set<Node> busStops = dbReader.getBusStops();
+		Map<String, Map<String, List<Integer>>> busLinesStops = dbReader.getBusLinesStops();
 
 		System.out.println("Reading edges from database (should take around 1 minute)...");
 		for (Node node : busStops) {
 			Set<Edge> byBus = dbReader.getReachableStopsByBus(node);
 			Set<Edge> byWalk = dbReader.getReachableStopsByWalk(node);
+
+			for (Edge edge : byBus) {
+				Map<String, List<Integer>> busLineStops = busLinesStops.get(edge.getLineId());
+				// search the interesting sub-sequences
+				List<Integer> sourceStopSequences = busLineStops.get(edge.getIdSource());
+				List<Integer> destinationStopSequences = busLineStops.get(edge.getIdDestination());
+				double minCost = Double.MAX_VALUE;
+				for (int sourceSequenceNumber : sourceStopSequences) {
+					OptionalInt destination = destinationStopSequences.stream().mapToInt(a->a).sorted().filter(a->a>sourceSequenceNumber).findFirst();
+					if(destination.isPresent()) {
+						int destinationSequenceNumber = destination.getAsInt();
+						// get the cost of this candidate sub-sequence
+						double cost = dbReader.getSequenceCost(edge.getLineId(), sourceSequenceNumber, destinationSequenceNumber);
+						if (cost < minCost) {
+							// this is the shortest
+							minCost = cost;
+						}
+					}
+				}
+				edge.setCost((int)minCost);
+				System.out.println("found cost between " + edge.getIdSource() + " and " + edge.getIdDestination() + " : " + edge.getCost());
+			}
 
 			graph.addNode(node);
 			graph.addEdges(node.getId(), byBus);
@@ -29,11 +52,11 @@ public class Main {
 
 		dbReader.close();
 		dbReader = null;
-		
+
 		Dijsktra dijkstra = new Dijsktra(graph);
 
 		System.out.println("Going to run Dijkstra from each node (should take around 15 min)...");
-		
+
 		MongoWriter mongoWriter = new MongoWriter();
 
 		// work with the data collected
@@ -54,7 +77,7 @@ public class Main {
 					// store the path
 					mongoWriter.addMinPath(minPath);
 				});
-		
+
 		mongoWriter.close();
 
 		System.out.println("Done");

@@ -16,6 +16,8 @@ public class Edge {
 	 * */
 	private String idDestination;
 	
+	private String lineId;
+	
 	/**
 	 * Modo di spostamento
 	 * 0 -> bus
@@ -28,9 +30,10 @@ public class Edge {
 	 * */
 	private int cost;
 	
-	public Edge(String idSource, String idDestination, boolean mode, int cost) {
+	public Edge(String idSource, String idDestination, String lineId, boolean mode, int cost) {
 		this.idSource = idSource;
 		this.idDestination = idDestination;
+		this.lineId = lineId;
 		this.mode = mode;
 		this.cost = cost;
 	}
@@ -58,5 +61,9 @@ public class Edge {
 	}
 	public void setCost(int cost) {
 		this.cost = cost;
+	}
+	
+	public String getLineId() {
+		return lineId;
 	}
 }
