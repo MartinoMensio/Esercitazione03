@@ -55,9 +55,9 @@ WHERE ST_Distance(location, ST_GeographyFromText(?)) < 250
 ### Get stations reachable by using one bus from a given BusStop
 
 ```
-SELECT c.id, a.lineId AS lineId
-FROM BusLineStop a, BusLineStop b, BusStopGeographic c
-WHERE a.lineId=b.lineId AND b.stopId=? AND a.stopId=c.id
+SELECT bsg.id, dst.lineId
+FROM BusLineStop src, BusLineStop dst, BusStopGeographic bsg
+WHERE src.lineId=dst.lineId AND src.stopId=? AND dst.stopId=bsg.id AND src.sequenceNumber>dst.sequenceNumber
 ```
 
 ### Evaluate length of a sequence given start seq number and end seq number and line number
