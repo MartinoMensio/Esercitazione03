@@ -55,7 +55,7 @@ public class RootConfig {
 		HibernateJpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
 		vendorAdapter.setDatabase(Database.POSTGRESQL);
 		vendorAdapter.setGenerateDdl(false);
-		vendorAdapter.setShowSql(true);
+		vendorAdapter.setShowSql(false);
 		vendorAdapter.setDatabasePlatform("org.hibernate.spatial.dialect.postgis.PostgisDialect");
 		
 		LocalContainerEntityManagerFactoryBean factory = new LocalContainerEntityManagerFactoryBean();
