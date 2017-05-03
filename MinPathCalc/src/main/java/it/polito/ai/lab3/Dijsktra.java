@@ -33,8 +33,13 @@ public class Dijsktra {
 		// initialize the adjacencies of the source (distances of the directly
 		// linked nodes)
 		for (Edge edge : graph.getEdges(sourceId)) {
-			distance.put(edge.getIdDestination(), edge.getCost());
-			previousEdge.put(edge.getIdDestination(), edge);
+			if (distance.get(edge.getIdDestination()) > edge.getCost()) {
+				// check the initialization because multiple edges with same src
+				// and dst are possible in case the stops are in the range of
+				// 250m and also belong to the same bus line
+				distance.put(edge.getIdDestination(), edge.getCost());
+				previousEdge.put(edge.getIdDestination(), edge);
+			}
 		}
 
 		while (!openSet.isEmpty()) {
