@@ -13,8 +13,8 @@ import it.polito.ai.lab3.mongo.repo.entities.Edge;
 
 public class EdgesRepositoryImpl implements EdgesRepository {
 
-	@Autowired 
-	MongoTemplate mongoTemplate;
+	//@Autowired 
+	//private MongoTemplate mongoTemplate;
 	
 	public List<Edge> findAll() {
 		// TODO Auto-generated method stub

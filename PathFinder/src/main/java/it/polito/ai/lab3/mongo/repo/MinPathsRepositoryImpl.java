@@ -28,6 +28,7 @@ public class MinPathsRepositoryImpl implements MinPathsRepository {
 		 return l; 
 	}                      
 
+	//TODO questi metodi si possono rimuovere? Ha senso dichiarare la classe astratta?
 
 	public List<MinPath> findAll() {
 		List<MinPath> minPaths = mongoTemplate.findAll(MinPath.class);
