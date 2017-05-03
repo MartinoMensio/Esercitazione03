@@ -19,7 +19,7 @@ public class Main {
 		Set<Node> busStops = dbReader.getBusStops();
 		Map<String, Map<String, List<Integer>>> busLinesStops = dbReader.getBusLinesStops();
 
-		System.out.println("Reading edges from database (should take around 1 minute)...");
+		System.out.println("Reading edges from database (should take around 45 minute)...");
 		busStops.parallelStream().forEach(node -> {
 			Connection connection = dbReader.getConnection();
 			Set<Edge> byBus = dbReader.getReachableStopsByBus(connection, node);
@@ -64,7 +64,7 @@ public class Main {
 
 		Dijsktra dijkstra = new Dijsktra(graph);
 
-		System.out.println("Going to run Dijkstra from each node (should take around 15 min)...");
+		System.out.println("Going to run Dijkstra from each node (should take around 25 min)...");
 
 		MongoWriter mongoWriter = new MongoWriter();
 
