@@ -21,7 +21,7 @@ public class MongoWriter {
 	 */
 	public MongoWriter() {
 		mongoClient = new MongoClient("localhost");
-		MongoDatabase database = mongoClient.getDatabase("ai_ride_penalty_5");
+		MongoDatabase database = mongoClient.getDatabase("ai");
 		minPathsCollection = database.getCollection("min_paths");
 		// clear before starting
 		minPathsCollection.drop();
