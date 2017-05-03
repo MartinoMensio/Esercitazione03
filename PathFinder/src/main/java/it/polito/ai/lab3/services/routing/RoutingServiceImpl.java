@@ -19,8 +19,8 @@ public class RoutingServiceImpl implements RoutingService {
 	@Autowired
 	private BusStopsGeoRepository busStopsGeoRepository;
 	
-	//@Autowired
-	//private MinPathsRepositoryImpl minPathsRepository;
+	@Autowired
+	private MinPathsRepository minPathsRepository;
 	
 
 	public Path getPath(String srcLat, String srcLng, String dstLat, String dstLng) {

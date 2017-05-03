@@ -14,18 +14,18 @@ import org.springframework.data.mongodb.core.query.Query;
 import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 
 public class MinPathsRepositoryImpl implements MinPathsRepository {
-	
+
 	@Autowired 
 	MongoTemplate mongoTemplate;
-	
-	public List<MinPath> myCustomFind(String idSource,String idDestination) {  
-	      
-		   Query q = new Query();
-		   q.addCriteria(Criteria.where("idSource").is(idSource).
-		     andOperator(Criteria.where("idDestination").is(idDestination)));
 
-		 List<MinPath> l = mongoTemplate.find(q, MinPath.class); 
-		 return l; 
+	public List<MinPath> myCustomFind(String idSource,String idDestination) {  
+
+		Query q = new Query();
+		q.addCriteria(Criteria.where("idSource").is(idSource).
+				andOperator(Criteria.where("idDestination").is(idDestination)));
+
+		List<MinPath> l = mongoTemplate.find(q, MinPath.class); 
+		return l; 
 	}                      
 
 	//TODO questi metodi si possono rimuovere? Ha senso dichiarare la classe astratta?
@@ -77,22 +77,22 @@ public class MinPathsRepositoryImpl implements MinPathsRepository {
 
 	public void delete(Long arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void delete(MinPath arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void delete(Iterable<? extends MinPath> arg0) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void deleteAll() {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public boolean exists(Long arg0) {

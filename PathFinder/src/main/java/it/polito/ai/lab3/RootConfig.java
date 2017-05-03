@@ -28,7 +28,7 @@ import it.polito.ai.lab3.services.routing.RoutingService;
 import it.polito.ai.lab3.services.routing.RoutingServiceImpl;
 
 @Configuration
-//@EnableMongoRepositories
+@EnableMongoRepositories({"it.polito.ai.lab3.mongo.repo"})
 @EnableJpaRepositories
 @ComponentScan(basePackages={"it.polito.ai.lab3.services"})
 public class RootConfig {
