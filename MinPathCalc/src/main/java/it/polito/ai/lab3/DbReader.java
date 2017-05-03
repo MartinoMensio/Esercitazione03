@@ -9,32 +9,16 @@ import com.mchange.v2.c3p0.ComboPooledDataSource;
 import it.polito.ai.lab3.mongoClasses.Edge;
 import it.polito.ai.lab3.model.Node;
 
-/*
-
-- lista fermate con posizione "select id,ST_X(location::geometry) as lng, ST_X(location::geography) as lat from busStopGeographic"
-
-- lista e distanza fermate raggiungibili con mezzo 
-"select id, ST_Distance(location, MY_LOCATION) as distance from BusStopGeographic
-where id in (
-  // l'id è uno di quelli raggiungibili direttamente con un bus che passa per la nostra fermata
-  select a.stopId from BusLineStop a, BusLineStop b
-  where a.lineId=b.lineId
-  and b.stopId=MY_STOP
-)"
-
-- distanza di fermate raggiungibili a piedi
-"select id, ST_Distance(location, MY_LOCATION) as distance
-from busStopGeographic
-where ST_Distance(location, MY_LOCATION) < 250"
-
-
- */
 public class DbReader {
 
-	private final static int RIDE_PENALTY = 500; // going on a bus has penalty
-	private final static int WALK_WEIGHT = 5;
-	private final static int BUS_WEIGHT = 1;
+	private final static int RIDE_PENALTY = 1000; // going on a bus has penalty
+	private final static int WALK_WEIGHT = 10;
+	private final static int BUS_WEIGHT = 2;
+	private final static int METRO_WEIGHT = 1;
 
+	/**
+	 * We are using a connection pool to be able to use 100% CPU
+	 */
 	private ComboPooledDataSource cpds;
 	private Connection connection;
 
@@ -210,17 +194,17 @@ public class DbReader {
 	 * @return
 	 */
 	public double getSequenceCost(Connection connection, String lineId, int srcSequenceNumber, int dstSequenceNumber) {
-		double lenght;
+		double length;
 		try {
 			PreparedStatement getSequenceLengthStmt = connection.prepareStatement(getSequenceLength);
-			
+
 			getSequenceLengthStmt.setString(1, lineId);
 			getSequenceLengthStmt.setInt(2, srcSequenceNumber);
 			getSequenceLengthStmt.setInt(3, dstSequenceNumber);
 			ResultSet rs = getSequenceLengthStmt.executeQuery();
 			try {
 				rs.next();
-				lenght = rs.getDouble("length");
+				length = rs.getDouble("length");
 			} finally {
 				rs.close();
 				getSequenceLengthStmt.close();
@@ -229,9 +213,14 @@ public class DbReader {
 		} catch (SQLException e) {
 			throw new RuntimeException(e);
 		}
-		return lenght * BUS_WEIGHT + RIDE_PENALTY;
+		if (lineId.equals("METRO")) {
+			// the metro is special
+			return length * METRO_WEIGHT;
+		} else {
+			return length * BUS_WEIGHT + RIDE_PENALTY;
+		}
 	}
-	
+
 	public Connection getConnection() {
 		try {
 			return cpds.getConnection();
@@ -239,7 +228,7 @@ public class DbReader {
 			throw new RuntimeException(e);
 		}
 	}
-	
+
 	public void closeConnection(Connection c) {
 		try {
 			c.close();

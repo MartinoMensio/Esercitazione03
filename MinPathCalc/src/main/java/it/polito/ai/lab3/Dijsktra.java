@@ -27,7 +27,6 @@ public class Dijsktra {
 				distance.put(vertex, Integer.MAX_VALUE);
 				openSet.add(vertex);
 			}
-			// initialize for each destination vertex an empty path
 		}
 
 		// initialize the adjacencies of the source (distances of the directly
@@ -44,7 +43,7 @@ public class Dijsktra {
 
 		while (!openSet.isEmpty()) {
 
-			String min = sourceId; // will never be like that
+			String min = sourceId;
 			int minDis = Integer.MAX_VALUE;
 
 			// find the nearest vertex
