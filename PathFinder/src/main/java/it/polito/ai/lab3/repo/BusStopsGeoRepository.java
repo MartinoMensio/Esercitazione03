@@ -21,7 +21,7 @@ public interface BusStopsGeoRepository extends CrudRepository<BusStopGeographic,
 	 * @return the set of found bus stops
 	 */
 	@Query("select t " +
-           "from BusStopGeographic t " +
-           "where ST_Distance(t.location, ST_GeographyFromText(:point)) < :distance")
+	           "from BusStopGeographic t " +
+	           "where ST_DWithin(t.location, ST_GeographyFromText(:point), :distance) = true")
 	List<BusStopGeographic> findByDistance(@Param("point") String point, @Param("distance") Double distance);
 }
