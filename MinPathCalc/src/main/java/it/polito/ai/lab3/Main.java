@@ -3,6 +3,8 @@ package it.polito.ai.lab3;
 import java.sql.Connection;
 import java.util.*;
 
+import com.mongodb.MongoWriteException;
+
 import it.polito.ai.lab3.model.*;
 import it.polito.ai.lab3.mongoClasses.*;
 
@@ -50,8 +52,9 @@ public class Main {
 					}
 				}
 				edge.setCost((int) minCost);
-				edge.setSequenceNumberSource(bestSrcSeqNumber);
-				edge.setSequenceNumberDestination(bestDstSeqNumber);
+				// get the list of intermediate stops for a better representation of the edge
+				List<String> intermediateStops = dbReader.getBusLineStopsIdBetween(connection, edge.getLineId(), bestSrcSeqNumber, bestDstSeqNumber);
+				edge.setStopsId(intermediateStops);
 			}
 
 			dbReader.closeConnection(connection);
@@ -61,14 +64,16 @@ public class Main {
 			graph.addEdges(node.getId(), byWalk);
 		});
 
+		dbReader.close();
 		printTime("done with postgis");
 
-		
+		System.out.println("Numero di nodi: " + graph.myNodes.size());
+		System.out.println("numero di archi: " + graph.myAdjList.values().stream().flatMap(value -> value.stream()).count());
 
 		Dijsktra dijkstra = new Dijsktra(graph);
 
 		System.out.println("Going to run Dijkstra from each node (should take around 25 min)...");
-
+		
 		MongoWriter mongoWriter = new MongoWriter();
 
 		// work with the data collected
@@ -83,19 +88,15 @@ public class Main {
 					return dijkstra.shortestPath(node);
 				})
 				// map from a Stream<Map<String,MinPath>> to a Stream<MinPath>
-				.flatMap(map -> map.values().stream())
-				// for each MinPath
-				.forEach(minPath -> {
-					for (Edge edge : minPath.getEdges()) {
-						// get the list of intermediate stops for a better representation of the edge
-						List<String> intermediateStops = dbReader.getBusLineStopsIdBetween(edge.getLineId(), edge.getSequenceNumberSource(), edge.getSequenceNumberDestination());
-						edge.setStopsId(intermediateStops);
-					}
+				.flatMap(map -> map.values().stream()).forEach(minPath -> {
 					// store the path
-					mongoWriter.addMinPath(minPath);
+					try {
+						mongoWriter.addMinPath(minPath);
+					} catch (MongoWriteException e) {
+						System.err.println("An unwanted exception occurred with the path between " + minPath.getIdSource() + " and " + minPath.getIdDestination());
+					}
 				});
 
-		dbReader.close();
 		mongoWriter.close();
 
 		printTime("done");

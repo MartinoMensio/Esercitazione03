@@ -14,8 +14,8 @@ import it.polito.ai.lab3.mongoClasses.Edge;
  */
 
 public class Graph {
-	private static ConcurrentMap<String, Node> myNodes;
-	private static ConcurrentMap<String, Set<Edge>> myAdjList;
+	public ConcurrentMap<String, Node> myNodes;
+	public ConcurrentMap<String, Set<Edge>> myAdjList;
 
 	public Graph() {
 		myAdjList = new ConcurrentHashMap<String, Set<Edge>>();
