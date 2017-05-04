@@ -50,9 +50,8 @@ public class Main {
 					}
 				}
 				edge.setCost((int) minCost);
-				// get the list of intermediate stops for a better representation of the edge
-				List<String> intermediateStops = dbReader.getBusLineStopsIdBetween(connection, edge.getLineId(), bestSrcSeqNumber, bestDstSeqNumber);
-				edge.setStopsId(intermediateStops);
+				edge.setSequenceNumberSource(bestSrcSeqNumber);
+				edge.setSequenceNumberDestination(bestDstSeqNumber);
 			}
 
 			dbReader.closeConnection(connection);
@@ -64,7 +63,7 @@ public class Main {
 
 		printTime("done with postgis");
 
-		dbReader.close();
+		
 
 		Dijsktra dijkstra = new Dijsktra(graph);
 
@@ -87,10 +86,16 @@ public class Main {
 				.flatMap(map -> map.values().stream())
 				// for each MinPath
 				.forEach(minPath -> {
+					for (Edge edge : minPath.getEdges()) {
+						// get the list of intermediate stops for a better representation of the edge
+						List<String> intermediateStops = dbReader.getBusLineStopsIdBetween(edge.getLineId(), edge.getSequenceNumberSource(), edge.getSequenceNumberDestination());
+						edge.setStopsId(intermediateStops);
+					}
 					// store the path
 					mongoWriter.addMinPath(minPath);
 				});
 
+		dbReader.close();
 		mongoWriter.close();
 
 		printTime("done");

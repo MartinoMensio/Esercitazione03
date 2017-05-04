@@ -35,6 +35,9 @@ public class Edge {
 	 * the edge (not as a single line)
 	 */
 	private List<String> stopsId;
+	
+	private int sequenceNumberSource; // used only to query postgis after dijkstra
+	private int sequenceNumberDestination;
 
 	public Edge(String idSource, String idDestination, String lineId, boolean mode, int cost) {
 		this.idSource = idSource;
@@ -43,6 +46,22 @@ public class Edge {
 		this.mode = mode;
 		this.cost = cost;
 		this.stopsId = new ArrayList<String>();
+	}
+
+	public int getSequenceNumberSource() {
+		return sequenceNumberSource;
+	}
+
+	public void setSequenceNumberSource(int sequenceNumberSource) {
+		this.sequenceNumberSource = sequenceNumberSource;
+	}
+
+	public int getSequenceNumberDestination() {
+		return sequenceNumberDestination;
+	}
+
+	public void setSequenceNumberDestination(int sequenceNumberDestination) {
+		this.sequenceNumberDestination = sequenceNumberDestination;
 	}
 
 	public String getIdSource() {
