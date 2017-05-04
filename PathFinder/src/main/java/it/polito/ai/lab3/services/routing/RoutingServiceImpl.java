@@ -1,5 +1,6 @@
 package it.polito.ai.lab3.services.routing;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -39,15 +40,16 @@ public class RoutingServiceImpl implements RoutingService {
 		}
 		
 		// Prendo tutti i persocrsi minimi tra tutte le source e  tutte le destination
-		//List<MinPath> minPaths;
-		/*for (BusStopGeographic idSource : stopsNearSrc) {
+		List<MinPath> minPaths = new ArrayList<MinPath>();
+		for (BusStopGeographic idSource : stopsNearSrc) {
 			for (BusStopGeographic idDestination : stopsNearDst) {
 				List<MinPath> minPaths2 = minPathsRepository.myCustomFind(idSource.getId(), idDestination.getId());
 				System.out.println("size: " + minPaths2.size());
+				minPaths.addAll(minPaths2);
 			}
-		}*/
-		
-		
+		}
+	
+		System.out.println("found paths " + minPaths.size());
 		
 		//List<MinPath> minPaths = minPathsRepository.myCustomFind(idSource, idDestination);
 		
