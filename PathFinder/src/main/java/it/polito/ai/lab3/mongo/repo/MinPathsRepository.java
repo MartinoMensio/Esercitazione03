@@ -13,6 +13,7 @@ import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
+import it.polito.ai.lab3.mongo.repo.entities.Key;
 import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 
 @Repository
@@ -22,10 +23,10 @@ public class MinPathsRepository implements MongoRepository<MinPath, Long>{
 	
 	public List<MinPath> myCustomFind(String idSource, String idDestination) {
 
-		Query q = new Query();
-		q.addCriteria(
-				Criteria.where("_id.src").is(idSource).andOperator(Criteria.where("_id.dst").is(idDestination)));
-
+		Key key = new Key();
+		key.setSrc(idSource);
+		key.setDst(idDestination);
+		Query q = new Query(Criteria.where("_id").is(key));
 		List<MinPath> l = mongoTemplate.find(q, MinPath.class);
 		return l;
 	} 
