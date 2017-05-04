@@ -223,7 +223,7 @@ public class DbReader {
 		}
 	}
 
-	public List<String> getBusLineStopsIdBetween(String lineId, int bestSrcSeqNumber,
+	public List<String> getBusLineStopsIdBetween(Connection connection, String lineId, int bestSrcSeqNumber,
 			int bestDstSeqNumber) {
 		List<String> result = new ArrayList<String>();
 		try {
