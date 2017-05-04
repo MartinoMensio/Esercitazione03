@@ -2,13 +2,20 @@ package it.polito.ai.lab3.services.routing;
 
 import java.util.List;
 
-import it.polito.ai.lab3.repo.entities.BusStop;
 
 public interface Path {
 	
-	public BusStop getSource();
+	/**
+	 * The user-defined source point clicked on the map
+	 * @return
+	 */
+	public Point getSource();
 	
-	public BusStop getDestination();
+	/**
+	 * The user-defined destination point clicked on the map
+	 * @return
+	 */
+	public Point getDestination();
 
 	/**
 	 * Returns the list of all the bus stops involved in the computed path in GeoJson format

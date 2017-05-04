@@ -9,8 +9,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.polito.ai.lab3.mongo.repo.MinPathsRepository;
+import it.polito.ai.lab3.mongo.repo.entities.Edge;
 import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 import it.polito.ai.lab3.repo.BusStopsGeoRepository;
+import it.polito.ai.lab3.repo.BusStopsRepository;
+import it.polito.ai.lab3.repo.entities.BusStop;
 import it.polito.ai.lab3.repo.entities.BusStopGeographic;
 
 @Service
@@ -18,6 +21,9 @@ import it.polito.ai.lab3.repo.entities.BusStopGeographic;
 public class RoutingServiceImpl implements RoutingService {
 	@Autowired
 	private BusStopsGeoRepository busStopsGeoRepository;
+	
+	@Autowired
+	private BusStopsRepository busStopsRepository;
 	
 	@Autowired
 	private MinPathsRepository minPathsRepository;
@@ -52,11 +58,32 @@ public class RoutingServiceImpl implements RoutingService {
 	
 		System.out.println("found paths " + minPaths.size());
 		
-		//List<MinPath> minPaths = minPathsRepository.myCustomFind(idSource, idDestination);
+		// find the minimum
+		MinPath bestPath = null;
+		for (MinPath p : minPaths) {
+			if (bestPath == null || p.getTotalCost() < bestPath.getTotalCost()) {
+				bestPath = p;
+			}
+		}
+		if (bestPath == null) {
+			// no path found
+			return null;
+		}
+		System.out.println("Best: " + bestPath.getIdSource() + " --> " + bestPath.getIdDestination() + " : " + bestPath.getTotalCost());
 		
-		// TODO
+		List<PathSegment> segments = new ArrayList<PathSegment>();
+		for (Edge e : bestPath.getEdges()) {
+			
+			BusStop source = busStopsRepository.findOne(e.getIdSource());
+			BusStop destination = busStopsRepository.findOne(e.getIdDestination());
+			List<BusStop> intermediateStops = new ArrayList<BusStop>();
+			// TODO get the intermediate stops (not yet stored in mongo
+			PathSegmentImpl segment = new PathSegmentImpl(source, destination, e.getLineId(), intermediateStops);
+			segments.add(segment);
+		}
+		Point src = new Point(Double.parseDouble(srcLat), Double.parseDouble(srcLng));
+		Point dst = new Point(Double.parseDouble(dstLat), Double.parseDouble(dstLng));
 		
-		
-		return new PathImpl();
+		return new PathImpl(src, dst, segments);
 	}
 }

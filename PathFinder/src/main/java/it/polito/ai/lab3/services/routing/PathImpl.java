@@ -2,19 +2,23 @@ package it.polito.ai.lab3.services.routing;
 
 import java.util.List;
 
-import it.polito.ai.lab3.repo.entities.BusStop;
-
 public class PathImpl implements Path {
-	private BusStop source;
-	private BusStop destination;
+	private Point source;
+	private Point destination;
 	private List<PathSegment> pathSegments;
 	
+	public PathImpl(Point source, Point destination, List<PathSegment> segments) {
+		this.source = source;
+		this.destination = destination;
+		pathSegments = segments;
+	}
 	
-	public BusStop getSource() {
+	
+	public Point getSource() {
 		return source;
 	}
 
-	public BusStop getDestination() {
+	public Point getDestination() {
 		return destination;
 	}
 
