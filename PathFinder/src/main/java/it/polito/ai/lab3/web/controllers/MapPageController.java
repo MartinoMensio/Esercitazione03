@@ -29,7 +29,7 @@ public class MapPageController {
 		// Check if the requested line exists
 		if (busLine == null) {
 			// TODO manage this case
-			return "not_found";
+			return "redirect:busLinesList";
 		}
 			
 		List<BusStop> busStopsList = busLine.getStops();
