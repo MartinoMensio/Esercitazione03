@@ -24,7 +24,7 @@ public class MinPathsRepository implements MongoRepository<MinPath, Long>{
 
 		Query q = new Query();
 		q.addCriteria(
-				Criteria.where("idSource").is(idSource).andOperator(Criteria.where("idDestination").is(idDestination)));
+				Criteria.where("_id.src").is(idSource).andOperator(Criteria.where("_id.dst").is(idDestination)));
 
 		List<MinPath> l = mongoTemplate.find(q, MinPath.class);
 		return l;
