@@ -217,13 +217,13 @@ public class DbReader {
 		}
 		if (lineId.equals("METRO")) {
 			// the metro is special
-			return length * METRO_WEIGHT;
+			return length * METRO_WEIGHT + RIDE_PENALTY;
 		} else {
 			return length * BUS_WEIGHT + RIDE_PENALTY;
 		}
 	}
 
-	public List<String> getBusLineStopsIdBetween(Connection connection, String lineId, int bestSrcSeqNumber,
+	public List<String> getBusLineStopsIdBetween(String lineId, int bestSrcSeqNumber,
 			int bestDstSeqNumber) {
 		List<String> result = new ArrayList<String>();
 		try {
