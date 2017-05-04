@@ -41,6 +41,7 @@ public class RoutingServiceImpl implements RoutingService {
 		
 		// Prendo tutti i persocrsi minimi tra tutte le source e  tutte le destination
 		List<MinPath> minPaths = new ArrayList<MinPath>();
+		System.out.println("Calcolo del percorso più veloce:");
 		for (BusStopGeographic idSource : stopsNearSrc) {
 			for (BusStopGeographic idDestination : stopsNearDst) {
 				List<MinPath> minPaths2 = minPathsRepository.myCustomFind(idSource.getId(), idDestination.getId());
