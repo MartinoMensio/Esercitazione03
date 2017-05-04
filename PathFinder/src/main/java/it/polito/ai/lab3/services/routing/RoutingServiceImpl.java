@@ -51,7 +51,6 @@ public class RoutingServiceImpl implements RoutingService {
 		for (BusStopGeographic idSource : stopsNearSrc) {
 			for (BusStopGeographic idDestination : stopsNearDst) {
 				List<MinPath> minPaths2 = minPathsRepository.myCustomFind(idSource.getId(), idDestination.getId());
-				System.out.println("size: " + minPaths2.size());
 				minPaths.addAll(minPaths2);
 			}
 		}
