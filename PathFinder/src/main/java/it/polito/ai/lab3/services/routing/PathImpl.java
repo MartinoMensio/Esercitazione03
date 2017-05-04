@@ -1,5 +1,7 @@
 package it.polito.ai.lab3.services.routing;
 
+import java.util.List;
+
 public class PathImpl implements Path {
 
 	public String getAllBusStopsAsGeoJson() {
@@ -8,6 +10,11 @@ public class PathImpl implements Path {
 	}
 
 	public String getPathSegmentsAsGeoJson() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public List<PathSegment> getPathSegments() {
 		// TODO Auto-generated method stub
 		return null;
 	}

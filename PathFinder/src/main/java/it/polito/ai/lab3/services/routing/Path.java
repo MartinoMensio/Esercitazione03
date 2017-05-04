@@ -1,5 +1,7 @@
 package it.polito.ai.lab3.services.routing;
 
+import java.util.List;
+
 public interface Path {
 
 	/**
@@ -18,4 +20,6 @@ public interface Path {
 	 * @return a GeoJson formatted string
 	 */
 	public String getPathSegmentsAsGeoJson();
+	
+	public List<PathSegment> getPathSegments();
 }
