@@ -32,21 +32,21 @@ foreach busStop in busStops:
 
 ### Read the list of BusStop
 
-```
+```SQL
 SELECT id, name, ST_Y(location::geometry) AS lng, ST_X(location::geometry) AS lat
 FROM busStopGeographic
 ```
 
 ### Read the stopId and sequenceNumber
 
-```
+```SQL
 SELECT lineIstopId, sequenceNumber
 FROM BusLineStop
 ```
 
 ### Get stations in range of 250m from a given BusStop
 
-```
+```SQL
 SELECT id, ST_Distance(location, ST_GeographyFromText(?)) AS distance
 FROM busStopGeographic
 WHERE ST_Distance(location, ST_GeographyFromText(?)) < 250
@@ -54,7 +54,7 @@ WHERE ST_Distance(location, ST_GeographyFromText(?)) < 250
 
 ### Get stations reachable by using one bus from a given BusStop
 
-```
+```SQL
 SELECT bsg.id, dst.lineId
 FROM BusLineStop src, BusLineStop dst, BusStopGeographic bsg
 WHERE src.lineId=dst.lineId AND src.stopId=? AND dst.stopId=bsg.id AND src.sequenceNumber>dst.sequenceNumber
@@ -62,10 +62,18 @@ WHERE src.lineId=dst.lineId AND src.stopId=? AND dst.stopId=bsg.id AND src.seque
 
 ### Evaluate length of a sequence given start seq number and end seq number and line number
 
-```
+```SQL
 SELECT st_Length(ST_MakeLine(bsg.location::geometry ORDER BY bls.sequenceNumber)::geography) AS length
 FROM BusStopGeographic bsg, BusLineStop bls
-WHERE bls.lineId=? AND bls.sequenceNumber>=? AND BLS.sequenceNumber<=? AND bsg.id=bls.stopId
+WHERE bls.lineId=? AND bls.sequenceNumber>=? AND bls.sequenceNumber<=? AND bsg.id=bls.stopId
+```
+
+### Get the stops id belonging to a line between two stops identified by sequence number
+
+```SQL
+SELECT stopId
+FROM BusLineStop
+WHERE lineId=? AND sequenceNumber>=? AND sequenceNumber<=?
 ```
 
 ## Dijkstra
@@ -74,4 +82,26 @@ TODO documentation
 
 ## Inserting in mongoDB
 
-TODO documentation
+The documents contain the following informations:
+
+```json
+{
+  "_id" : {
+    "src" : "557",
+    "dst" : "476"
+  },
+  "idSource" : "557",
+  "idDestination" : "476",
+  "edges" : [{
+    "idSource" : "557",
+    "idDestination" : "476",
+    "mode" : false,
+    "cost" : 4456,
+    "lineId" : "55",
+    "stopsId": ["557","559","3275","2006","2008","1295","2010","249","1642","471","474","476"]
+  }],
+  "totalCost" : 4456
+}
+```
+
+The `_id` field is added for faster searches.
