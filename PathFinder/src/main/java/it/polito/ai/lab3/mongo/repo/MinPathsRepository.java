@@ -2,10 +2,14 @@ package it.polito.ai.lab3.mongo.repo;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Example;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 
@@ -14,6 +18,18 @@ import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 @Repository
 public class MinPathsRepository implements MongoRepository<MinPath, Long>{
 
+	@Autowired MongoTemplate mongoTemplate;
+	
+	public List<MinPath> myCustomFind(String idSource, String idDestination) {
+
+		Query q = new Query();
+		q.addCriteria(
+				Criteria.where("idSource").is(idSource).andOperator(Criteria.where("idDestination").is(idDestination)));
+
+		List<MinPath> l = mongoTemplate.find(q, MinPath.class);
+		return l;
+	} 
+	
 	public Page<MinPath> findAll(Pageable arg0) {
 		// TODO Auto-generated method stub
 		return null;
