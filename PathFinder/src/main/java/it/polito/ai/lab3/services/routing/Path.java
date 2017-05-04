@@ -2,12 +2,19 @@ package it.polito.ai.lab3.services.routing;
 
 import java.util.List;
 
+import it.polito.ai.lab3.repo.entities.BusStop;
+
 public interface Path {
+	
+	public BusStop getSource();
+	
+	public BusStop getDestination();
 
 	/**
 	 * Returns the list of all the bus stops involved in the computed path in GeoJson format
 	 * @return a GeoJson formatted string
 	 */
+	@Deprecated
 	public String getAllBusStopsAsGeoJson();
 	
 	/**
@@ -19,7 +26,14 @@ public interface Path {
 	 * </ul>
 	 * @return a GeoJson formatted string
 	 */
+	@Deprecated
 	public String getPathSegmentsAsGeoJson();
 	
+	/**
+	 * Returns the list of all the segments that compose the whole path.
+	 * Each segment represents a path that is traveled either on foot or by bus/metro.
+	 * 
+	 * @return list of PathSegment object
+	 */
 	public List<PathSegment> getPathSegments();
 }

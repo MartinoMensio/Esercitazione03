@@ -2,7 +2,21 @@ package it.polito.ai.lab3.services.routing;
 
 import java.util.List;
 
+import it.polito.ai.lab3.repo.entities.BusStop;
+
 public class PathImpl implements Path {
+	private BusStop source;
+	private BusStop destination;
+	private List<PathSegment> pathSegments;
+	
+	
+	public BusStop getSource() {
+		return source;
+	}
+
+	public BusStop getDestination() {
+		return destination;
+	}
 
 	public String getAllBusStopsAsGeoJson() {
 		// TODO Auto-generated method stub
@@ -15,8 +29,6 @@ public class PathImpl implements Path {
 	}
 
 	public List<PathSegment> getPathSegments() {
-		// TODO Auto-generated method stub
-		return null;
+		return pathSegments;
 	}
-
 }
