@@ -34,17 +34,8 @@
             	function onEachFeature(feature, layer) {
                     // does this feature have a property named popupContent?
                     if (feature.properties) {
-                        var title = "<p>"+feature.properties.busStopId + " - " + feature.properties.busStopName + "</p>" ;
-                    	document.writeln("<p>"+ feature.properties.busStopName + "</p>");
-
-                        var lines = "<ul>";
-                        for(var i in feature.properties.lines){
-                            if(feature.properties.lines.hasOwnProperty(i)){
-                                lines += "<li>" + feature.properties.lines[i] + "</li>";
-                            }
-                        }
-                        lines += "</ul>";
-                        layer.bindPopup(title+lines);
+                        var content = "<p>" + feature.properties.popupContent + "</p>" ;
+                        layer.bindPopup(content);
                     }
                 }
 
@@ -65,7 +56,8 @@
                 
                 // Draw the paths
                 var pathLayer = L.geoJSON(path, {
-                    style: lineStyle
+                    style: lineStyle,
+                    onEachFeature: onEachFeature
                 }).addTo(mymap);
                 pathLayer.addTo(mymap);
 

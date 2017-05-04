@@ -22,6 +22,6 @@ public class FeaturesCollection {
 	}
 	
 	public String getGeoJson() {
-		return featuresCollection.toString();
+		return featuresCollection.toString(4);
 	}
 }
