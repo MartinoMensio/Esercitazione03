@@ -23,6 +23,13 @@
 
             <script>
             	var srcDstPoints = ${srcDstPoints};
+            	var path = ${path};
+            	
+            	var lineStyle = {
+            		    "color": "#ff7800",
+            		    "weight": 5,
+            		    "opacity": 0.65
+            		};
             	
             	function onEachFeature(feature, layer) {
                     // does this feature have a property named popupContent?
@@ -53,8 +60,14 @@
 		    	}).addTo(mymap);
 
                 // Create the points
-                var layer = L.geoJSON(srcDstPoints)
-                layer.addTo(mymap);
+                var stopsLayer = L.geoJSON(srcDstPoints)
+                stopsLayer.addTo(mymap);
+                
+                // Draw the paths
+                var pathLayer = L.geoJSON(path, {
+                    style: lineStyle
+                }).addTo(mymap);
+                pathLayer.addTo(mymap);
 
                 mymap.fitBounds(layer.getBounds())
             </script>

@@ -67,7 +67,8 @@ public class ComputePathController {
 		String srcDstPointsGeoJson = srcDstPointsToGeoJson(src, dst);
 		ras.addFlashAttribute("srcDstPoints", srcDstPointsGeoJson);
 		
-		path.getPathSegments();
+		String pathGeoJson = pathSegmentsToGeoJson(path.getPathSegments());
+		ras.addFlashAttribute("path", pathGeoJson);
 
 		/*
 		 * Redirect to the resultPath page
@@ -91,9 +92,32 @@ public class ComputePathController {
 	}
 
 	private String pathSegmentsToGeoJson(List<PathSegment> segments) {
+		FeaturesCollection collection = FeaturesCollection.newFeaturesCollection();
 		
+		JSONArray coordinates = new JSONArray();
+		for (PathSegment p: segments) {
+			JSONArray segmentStart = new JSONArray();
+			segmentStart.put(p.getSource().getLongitude());
+			segmentStart.put(p.getSource().getLatitude());
+			coordinates.put(segmentStart);
+			
+			JSONArray segmentEnd = new JSONArray();
+			segmentEnd.put(p.getDestination().getLongitude());
+			segmentEnd.put(p.getDestination().getLatitude());
+			coordinates.put(segmentEnd);
+		}
 		
-		return null;
+		JSONObject geometry = new JSONObject();
+		geometry.put("type", "LineString");
+		geometry.put("coordinates", coordinates);
+		
+		// Create and fill up the feature object
+		JSONObject feature = new JSONObject();
+		feature.put("type", "Feature");
+		feature.put("geometry", geometry);
+		
+		collection.addFeature(feature);
+		return collection.getGeoJson();
 	}
 	
 	private JSONObject createPointFeature(Double lat, Double lng) {
