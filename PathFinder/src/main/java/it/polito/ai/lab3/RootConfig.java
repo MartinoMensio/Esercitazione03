@@ -24,18 +24,32 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.mongodb.MongoClient;
 
+import it.polito.ai.lab3.mongo.repo.MinPathsRepository;
+import it.polito.ai.lab3.services.buslinesviewer.BusLinesViewerService;
+import it.polito.ai.lab3.services.buslinesviewer.BusLinesViewerServiceImpl;
 import it.polito.ai.lab3.services.routing.RoutingService;
 import it.polito.ai.lab3.services.routing.RoutingServiceImpl;
 
 @Configuration
 @EnableMongoRepositories({"it.polito.ai.lab3.mongo.repo"})
-@EnableJpaRepositories
-@ComponentScan(basePackages={"it.polito.ai.lab3.services"})
+@EnableJpaRepositories(basePackages = "it.polito.ai.lab3.repo")
+@ComponentScan(basePackages={"it.polito.ai.lab3.service"})
 public class RootConfig {
 	// TODO define beans
 	@Bean
 	public RoutingService routingService(){
 		return new RoutingServiceImpl();
+	}
+	
+	@Bean 
+	public BusLinesViewerService busLinesViewerService() {
+		return new BusLinesViewerServiceImpl();
+	}
+	
+	// TODO this should not be there, autowiring should discover it
+	@Bean 
+	public MinPathsRepository minPathsRepository() {
+		return new MinPathsRepository();
 	}
 
 	@Bean

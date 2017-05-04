@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import it.polito.ai.lab3.mongo.repo.MinPathsRepository;
-import it.polito.ai.lab3.mongo.repo.MinPathsRepositoryImpl;
 import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 import it.polito.ai.lab3.repo.BusStopsGeoRepository;
 import it.polito.ai.lab3.repo.entities.BusStopGeographic;
