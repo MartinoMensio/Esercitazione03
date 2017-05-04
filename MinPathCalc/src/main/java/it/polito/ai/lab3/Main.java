@@ -31,6 +31,8 @@ public class Main {
 				List<Integer> sourceStopSequences = busLineStops.get(edge.getIdSource());
 				List<Integer> destinationStopSequences = busLineStops.get(edge.getIdDestination());
 				double minCost = Double.MAX_VALUE;
+				int bestSrcSeqNumber = -1;
+				int bestDstSeqNumber = -1;
 				for (int sourceSequenceNumber : sourceStopSequences) {
 					OptionalInt destination = destinationStopSequences.stream().mapToInt(a -> a).sorted()
 							.filter(a -> a > sourceSequenceNumber).findFirst();
@@ -42,10 +44,15 @@ public class Main {
 						if (cost < minCost) {
 							// this is the shortest
 							minCost = cost;
+							bestSrcSeqNumber = sourceSequenceNumber;
+							bestDstSeqNumber = destinationSequenceNumber;
 						}
 					}
 				}
 				edge.setCost((int) minCost);
+				// get the list of intermediate stops for a better representation of the edge
+				List<String> intermediateStops = dbReader.getBusLineStopsIdBetween(connection, edge.getLineId(), bestSrcSeqNumber, bestDstSeqNumber);
+				edge.setStopsId(intermediateStops);
 			}
 
 			dbReader.closeConnection(connection);

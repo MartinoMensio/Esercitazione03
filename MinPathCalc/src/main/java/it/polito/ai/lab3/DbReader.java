@@ -34,6 +34,8 @@ public class DbReader {
 	private final static String getSequenceLength = "SELECT st_Length(ST_MakeLine(bsg.location::geometry ORDER BY bls.sequenceNumber)::geography) AS length "
 			+ "FROM BusStopGeographic bsg, BusLineStop bls "
 			+ "WHERE bls.lineId=? AND bls.sequenceNumber>=? AND BLS.sequenceNumber<=? AND bsg.id=bls.stopId";
+	private final static String getSequenceStopsId = "SELECT stopId " + "FROM BusLineStop "
+			+ "WHERE lineId=? AND sequenceNumber>=? AND sequenceNumber<=?";
 
 	private PreparedStatement getBusStopsStmt;
 	private PreparedStatement getBusLinesStopsStmt;
@@ -219,6 +221,31 @@ public class DbReader {
 		} else {
 			return length * BUS_WEIGHT + RIDE_PENALTY;
 		}
+	}
+
+	public List<String> getBusLineStopsIdBetween(Connection connection, String lineId, int bestSrcSeqNumber,
+			int bestDstSeqNumber) {
+		List<String> result = new ArrayList<String>();
+		try {
+			PreparedStatement getSequenceStopsIdStmt = connection.prepareStatement(getSequenceStopsId);
+
+			getSequenceStopsIdStmt.setString(1, lineId);
+			getSequenceStopsIdStmt.setInt(2, bestSrcSeqNumber);
+			getSequenceStopsIdStmt.setInt(3, bestDstSeqNumber);
+			ResultSet rs = getSequenceStopsIdStmt.executeQuery();
+			try {
+				while (rs.next()) {
+					String stopId = rs.getString("stopId");
+					result.add(stopId);
+				}
+			} finally {
+				rs.close();
+				getSequenceStopsIdStmt.close();
+			}
+		} catch (SQLException e) {
+			throw new RuntimeException(e);
+		}
+		return result;
 	}
 
 	public Connection getConnection() {
