@@ -60,15 +60,25 @@ public class ComputePathController {
 				srcDstPoints.getSrcLng(), 
 				srcDstPoints.getDstLat(), 
 				srcDstPoints.getDstLng());
-
-		// Generate the GeoJson for the src and dst points and add the results to the model
-		Point src = path.getSource();	
-		Point dst = path.getDestination();
-		String srcDstPointsGeoJson = srcDstPointsToGeoJson(src, dst);
-		ras.addFlashAttribute("srcDstPoints", srcDstPointsGeoJson);
 		
-		String pathGeoJson = pathSegmentsToGeoJson(src, path.getPathSegments(), dst);
-		ras.addFlashAttribute("path", pathGeoJson);
+		if (path != null) {
+			// Generate the GeoJson for the src and dst points and add the results to the model
+			Point src = path.getSource();	
+			Point dst = path.getDestination();
+			String srcDstPointsGeoJson = srcDstPointsToGeoJson(src, dst);
+			ras.addFlashAttribute("srcDstPoints", srcDstPointsGeoJson);
+			
+			String pathGeoJson = pathSegmentsToGeoJson(src, path.getPathSegments(), dst);
+			ras.addFlashAttribute("path", pathGeoJson);
+			
+			ras.addFlashAttribute("fullPathInfo", path);
+		}
+		else {
+			// TODO
+			ras.addFlashAttribute("srcDstPoints", "");
+			ras.addFlashAttribute("path", "");
+			ras.addFlashAttribute("fullPathInfo", "");
+		}
 
 		/*
 		 * Redirect to the resultPath page
@@ -108,6 +118,7 @@ public class ComputePathController {
 		
 		// Add the intermediate segments
 		for (PathSegment p: segments) {
+			// Create the segment from start point of the segment to its end
 			JSONArray segmentStart = new JSONArray();
 			segmentStart.put(p.getSource().getLongitude());
 			segmentStart.put(p.getSource().getLatitude());
@@ -129,6 +140,7 @@ public class ComputePathController {
 			
 			collection.addFeature(feature);
 			
+			// Create the markers features at the start and  at the end of the segment 
 			JSONObject pointFeature = createPointFeature(p.getSource().getLatitude() , p.getSource().getLongitude());
 			if (p.getLine() != null) {
 				// by bus/metro

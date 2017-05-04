@@ -1,6 +1,9 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ page isELIgnored="false"%>
+
 <link rel="stylesheet"
 	href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
@@ -21,10 +24,23 @@
 	    	<h1>Miglior percorso trovato</h1>
 	    	<div id="mapid" style="width: 100%; height: 400px;"></div>
 
+            
+            <c:choose>
+		    <c:when test="${empty path}">
+				<script type="text/javascript">
+					var srcDstPoints;
+		           	var path;
+				</script>
+		    </c:when>
+		    <c:otherwise>
+	           	<script type="text/javascript">
+					var srcDstPoints = ${srcDstPoints};
+		           	var path = ${path};
+				</script>
+           	</c:otherwise>
+           	</c:choose>
+           	
             <script>
-            	var srcDstPoints = ${srcDstPoints};
-            	var path = ${path};
-            	
             	var lineStyle = {
             		    "color": "#ff7800",
             		    "weight": 5,
@@ -54,16 +70,56 @@
                 var stopsLayer = L.geoJSON(srcDstPoints)
                 stopsLayer.addTo(mymap);
                 
-                // Draw the paths
-                var pathLayer = L.geoJSON(path, {
-                    style: lineStyle,
-                    onEachFeature: onEachFeature
-                }).addTo(mymap);
-                pathLayer.addTo(mymap);
-
-                mymap.fitBounds(layer.getBounds())
+                if (path != null) {
+	                // Draw the paths if there is one
+	                var pathLayer = L.geoJSON(path, {
+	                    style: lineStyle,
+	                    onEachFeature: onEachFeature
+	                }).addTo(mymap);
+	                pathLayer.addTo(mymap);
+	                
+	                mymap.fitBounds(layer.getBounds());
+                }
             </script>
         </div>
+        
+        <h3>Dettaglio del percorso</h3>
+        
+        <c:choose>
+		    <c:when test="${empty path}">
+				<h4>Nessun percorso trovato!</h4>
+		    </c:when>
+		    <c:otherwise>
+		        <div class="container">
+				  <table class="table">
+				    <thead>
+						<tr>
+							<th>Mezzo di trasporto</th>
+							<th>Da</th>
+							<th>A</th>
+						</tr>
+				    </thead>
+				    <tbody>
+				    	<c:forEach items="${fullPathInfo.pathSegments}" var="segment">
+							<tr>
+								<c:choose>
+								    <c:when test="${segment.line != null}">
+										<td>${segment.line}</td>
+								    </c:when>    
+								    <c:otherwise>
+										<td>A piedi</td>
+								    </c:otherwise>
+								</c:choose>
+								
+								<td>${segment.source.name}</td>
+								<td>${segment.destination.name}</td>
+							</tr>
+						</c:forEach>
+				    </tbody>
+				  </table>
+				</div>
+			</c:otherwise>
+		</c:choose>
     </jsp:body>
 
 </t:template>

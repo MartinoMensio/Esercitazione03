@@ -16,3 +16,4 @@ public interface PathSegment {
 	public List<BusStop> getIntermediateStops();
 
 }
+
