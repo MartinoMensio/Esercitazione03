@@ -22,8 +22,8 @@
 	    	<div id="mapid" style="width: 100%; height: 400px;"></div>
 
             <script>
-            	var busStops = ${path}
-            	document.writeln("<h3>Lista delle fermate</h2>");
+            	var srcDstPoints = ${srcDstPoints};
+            	
             	function onEachFeature(feature, layer) {
                     // does this feature have a property named popupContent?
                     if (feature.properties) {
@@ -53,9 +53,7 @@
 		    	}).addTo(mymap);
 
                 // Create the points
-                var layer = L.geoJSON(busStops,{
-                    onEachFeature: onEachFeature
-                    })
+                var layer = L.geoJSON(srcDstPoints)
                 layer.addTo(mymap);
 
                 mymap.fitBounds(layer.getBounds())
