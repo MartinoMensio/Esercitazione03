@@ -4,7 +4,26 @@
 
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
+<meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<style>
 
+table, th, td {
+    border: 1px solid black;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 5px;
+    text-align: left;
+}
+table#t01 {
+    width: 100%;    
+    background-color: #f1f1c1;
+}
+</style>
 <t:template>
     <jsp:attribute name="header">
         <%@include file="../components/navbar.jsp"%>
@@ -110,5 +129,81 @@
 	        <form:button onclick="return submitForm(this.form);">Calcola percorso</form:button>
 	        <form:button onclick="return resetForm();">Cancella</form:button>
         </form:form>
+        
+       
+        <div class="container">
+		  <table class="table">
+		    <thead>
+		      <tr>
+		        <th>Firstname</th>
+		        <th>Lastname</th>
+		        <th>Email</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr>
+		        <td>John</td>
+		        <td>Doe</td>
+		        <td>john@example.com</td>
+		      </tr>
+		      <tr>
+		        <td>Mary</td>
+		        <td>Moe</td>
+		        <td>mary@example.com</td>
+		      </tr>
+		      <tr>
+		        <td>July</td>
+		        <td>Dooley</td>
+		        <td>july@example.com</td>
+		      </tr>
+		    </tbody>
+		  </table>
+		</div>
+		
+		<div class="container">
+		  <table class="table">
+		    <thead>
+		      <tr>
+		        <th>Firstname</th>
+		        <th>Lastname</th>
+		        <th>Email</th>
+		      </tr>
+		    </thead>
+		    <tbody>
+		      <tr>
+		        <td>Default</td>
+		        <td>Defaultson</td>
+		        <td>def@somemail.com</td>
+		      </tr>      
+		      <tr class="success">
+		        <td>Success</td>
+		        <td>Doe</td>
+		        <td>john@example.com</td>
+		      </tr>
+		      <tr class="danger">
+		        <td>Danger</td>
+		        <td>Moe</td>
+		        <td>mary@example.com</td>
+		      </tr>
+		      <tr class="info">
+		        <td>Info</td>
+		        <td>Dooley</td>
+		        <td>july@example.com</td>
+		      </tr>
+		      <tr class="warning">
+		        <td>Warning</td>
+		        <td>Refs</td>
+		        <td>bo@example.com</td>
+		      </tr>
+		      <tr class="active">
+		        <td>Active</td>
+		        <td>Activeson</td>
+		        <td>act@example.com</td>
+		      </tr>
+		    </tbody>
+		  </table>
+		</div>
+
+
     </jsp:body>
 </t:template>
