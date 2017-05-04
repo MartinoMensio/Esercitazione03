@@ -2,6 +2,7 @@
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+ <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <%@ page isELIgnored="false"%>
 
 <link rel="stylesheet"
@@ -24,7 +25,6 @@
 	    	<h1>Miglior percorso trovato</h1>
 	    	<div id="mapid" style="width: 100%; height: 400px;"></div>
 
-            
             <c:choose>
 		    <c:when test="${empty path}">
 				<script type="text/javascript">
@@ -100,6 +100,14 @@
 						</tr>
 				    </thead>
 				    <tbody>
+				    	<!-- Add start point details -->
+				    	<tr>
+							<td>A piedi</td>
+							<td>Punto di partenza</td>
+							<td>${fullPathInfo.pathSegments[0].source.name}</td>
+						</tr>
+				    
+				    	<!-- Add intermediate stops details -->
 				    	<c:forEach items="${fullPathInfo.pathSegments}" var="segment">
 							<tr>
 								<c:choose>
@@ -115,6 +123,13 @@
 								<td>${segment.destination.name}</td>
 							</tr>
 						</c:forEach>
+						
+						<!-- Add end point details -->
+				    	<tr>
+							<td>A piedi</td>
+							<td>${fullPathInfo.pathSegments[fn:length(fullPathInfo.pathSegments) - 1].destination.name}</td>
+							<td>Punto di arrivo</td>
+						</tr>
 				    </tbody>
 				  </table>
 				</div>
