@@ -62,12 +62,12 @@ public class ComputePathController {
 				srcDstPoints.getDstLng());
 
 		// Generate the GeoJson for the src and dst points and add the results to the model
-		Point src = path.getSource();		
+		Point src = path.getSource();	
 		Point dst = path.getDestination();
 		String srcDstPointsGeoJson = srcDstPointsToGeoJson(src, dst);
 		ras.addFlashAttribute("srcDstPoints", srcDstPointsGeoJson);
 		
-		String pathGeoJson = pathSegmentsToGeoJson(path.getPathSegments());
+		String pathGeoJson = pathSegmentsToGeoJson(src, path.getPathSegments(), dst);
 		ras.addFlashAttribute("path", pathGeoJson);
 
 		/*
@@ -91,10 +91,22 @@ public class ComputePathController {
 		return collection.getGeoJson();
 	}
 
-	private String pathSegmentsToGeoJson(List<PathSegment> segments) {
+	private String pathSegmentsToGeoJson(Point start, List<PathSegment> segments, Point end) {
 		FeaturesCollection collection = FeaturesCollection.newFeaturesCollection();
-		
 		JSONArray coordinates = new JSONArray();
+		
+		// Add the first segment
+		JSONArray firstSegmentStart = new JSONArray();
+		firstSegmentStart.put(start.getLng());
+		firstSegmentStart.put(start.getLat());
+		coordinates.put(firstSegmentStart);
+		
+		JSONArray firstSegmentEnd = new JSONArray();
+		firstSegmentEnd.put(segments.get(0).getSource().getLongitude());
+		firstSegmentEnd.put(segments.get(0).getSource().getLatitude());
+		coordinates.put(firstSegmentEnd);
+		
+		// Add the intermediate segments
 		for (PathSegment p: segments) {
 			JSONArray segmentStart = new JSONArray();
 			segmentStart.put(p.getSource().getLongitude());
@@ -105,18 +117,56 @@ public class ComputePathController {
 			segmentEnd.put(p.getDestination().getLongitude());
 			segmentEnd.put(p.getDestination().getLatitude());
 			coordinates.put(segmentEnd);
+			
+			JSONObject geometry = new JSONObject();
+			geometry.put("type", "LineString");
+			geometry.put("coordinates", coordinates);
+			
+			// Create and fill up the feature object
+			JSONObject feature = new JSONObject();
+			feature.put("type", "Feature");
+			feature.put("geometry", geometry);
+			
+			collection.addFeature(feature);
+			
+			JSONObject pointFeature = createPointFeature(p.getSource().getLatitude() , p.getSource().getLongitude());
+			if (p.getLine() != null) {
+				// by bus/metro
+				JSONObject properties = new JSONObject();
+				properties.put("popupContent", "Prendere linea " + p.getLine());
+				pointFeature.put("properties", properties);
+			}
+			else {
+				// on foot
+				JSONObject properties = new JSONObject();
+				properties.put("popupContent", "Procedere a piedi");
+				pointFeature.put("properties", properties);
+			}
+			
+			collection.addFeature(pointFeature);
 		}
 		
-		JSONObject geometry = new JSONObject();
-		geometry.put("type", "LineString");
-		geometry.put("coordinates", coordinates);
+		// Add the last marker
+		PathSegment lastSegment = segments.get(segments.size() - 1);
 		
-		// Create and fill up the feature object
-		JSONObject feature = new JSONObject();
-		feature.put("type", "Feature");
-		feature.put("geometry", geometry);
+		JSONObject lastMarker = createPointFeature(lastSegment.getDestination().getLatitude() , lastSegment.getDestination().getLongitude());
+		JSONObject properties = new JSONObject();
+		properties.put("popupContent", "Procedere a piedi");
+		lastMarker.put("properties", properties);
 		
-		collection.addFeature(feature);
+		collection.addFeature(lastMarker);
+		
+		// Add the last segment
+		JSONArray lastSegmentStart = new JSONArray();
+		lastSegmentStart.put(lastSegment.getDestination().getLongitude());
+		lastSegmentStart.put(lastSegment.getDestination().getLatitude());
+		coordinates.put(lastSegmentStart);
+		
+		JSONArray lastSegmentEnd = new JSONArray();
+		lastSegmentEnd.put(end.getLng());
+		lastSegmentEnd.put(end.getLat());
+		coordinates.put(lastSegmentEnd);
+		
 		return collection.getGeoJson();
 	}
 	
