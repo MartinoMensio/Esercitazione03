@@ -1,12 +1,13 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	pageEncoding="UTF-8"%>
 <%@taglib prefix="t" tagdir="/WEB-INF/tags"%>
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
+<link rel="stylesheet"
+	href="https://unpkg.com/leaflet@1.0.3/dist/leaflet.css" />
 <script src="https://unpkg.com/leaflet@1.0.3/dist/leaflet.js"></script>
 
 <t:template>
 
-    <jsp:attribute name="header">
+	<jsp:attribute name="header">
         <%@include file="../components/navbar.jsp"%>
     </jsp:attribute>
 	<jsp:attribute name="footer">
@@ -22,11 +23,12 @@
 
             <script>
             	var busStops = ${path}
-                
+            	document.writeln("<h3>Lista delle fermate</h2>");
             	function onEachFeature(feature, layer) {
                     // does this feature have a property named popupContent?
                     if (feature.properties) {
                         var title = "<p>"+feature.properties.busStopId + " - " + feature.properties.busStopName + "</p>" ;
+                    	document.writeln("<p>"+ feature.properties.busStopName + "</p>");
 
                         var lines = "<ul>";
                         for(var i in feature.properties.lines){
