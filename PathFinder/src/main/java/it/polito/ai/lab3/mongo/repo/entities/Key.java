@@ -1,6 +1,7 @@
 package it.polito.ai.lab3.mongo.repo.entities;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.persistence.Embeddable;
 
@@ -30,7 +31,6 @@ public class Key implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		// TODO review the comparison
 		if (this == obj)
 			return true;
 		if (obj == null)
@@ -51,5 +51,8 @@ public class Key implements Serializable {
 		}		
 	}
 	
-	// TODO add hash() method??
+	@Override
+	public int hashCode() {
+		return Objects.hash(src, dst);
+	}
 }

@@ -28,7 +28,6 @@ public class MapPageController {
 		
 		// Check if the requested line exists
 		if (busLine == null) {
-			// TODO manage this case
 			return "redirect:busLinesList";
 		}
 			
