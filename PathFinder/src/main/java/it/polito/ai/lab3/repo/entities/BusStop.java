@@ -14,7 +14,7 @@ public class BusStop {
 	private double latitude;
 	@Column(name="lng")
 	private double longitude;
-	@ManyToMany(fetch = FetchType.EAGER, mappedBy="stops")
+	@ManyToMany(mappedBy="stops")
 	private Set<BusLine> lines = new HashSet<BusLine>();
 	
 	public String getId() {

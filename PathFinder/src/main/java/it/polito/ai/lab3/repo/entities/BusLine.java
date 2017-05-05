@@ -10,7 +10,7 @@ public class BusLine {
 	@Id
 	private String line;
 	private String description;
-	@ManyToMany(fetch = FetchType.EAGER)
+	@ManyToMany
 	@JoinTable(name = "BusLineStop",
 		joinColumns = { @JoinColumn(name = "lineId") },
 		inverseJoinColumns = {@JoinColumn(name = "stopId")

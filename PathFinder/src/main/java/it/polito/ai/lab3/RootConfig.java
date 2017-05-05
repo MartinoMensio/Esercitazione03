@@ -21,6 +21,7 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.Database;
 import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.mongodb.MongoClient;
 
@@ -34,6 +35,7 @@ import it.polito.ai.lab3.services.routing.RoutingServiceImpl;
 @EnableMongoRepositories({"it.polito.ai.lab3.mongo.repo"}) // Supporto per MongoDB
 @EnableJpaRepositories(basePackages = "it.polito.ai.lab3.repo") // Supporto per ORM conforme a JPA
 @ComponentScan(basePackages={"it.polito.ai.lab3.service"}) // Indica dove in quale package vanno cercati i componenti
+@EnableTransactionManagement
 public class RootConfig {
 	// TODO define beans
 	@Bean

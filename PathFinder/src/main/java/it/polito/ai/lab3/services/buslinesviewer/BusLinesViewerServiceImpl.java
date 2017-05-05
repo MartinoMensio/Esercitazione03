@@ -5,12 +5,14 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import it.polito.ai.lab3.repo.BusLinesRepository;
 import it.polito.ai.lab3.repo.entities.BusLine;
+import it.polito.ai.lab3.repo.entities.BusStop;
 
 @Service
 @Transactional
@@ -18,6 +20,8 @@ public class BusLinesViewerServiceImpl implements BusLinesViewerService {
 	@Autowired
 	private BusLinesRepository busLinesRepository;
 	
+	private BusLine lineCached;
+	private List<BusStop> busStopsCache;
 	
 	public List<BusLine> getAllLines() {
 		List<BusLine> list = new ArrayList<BusLine>();
@@ -34,9 +38,17 @@ public class BusLinesViewerServiceImpl implements BusLinesViewerService {
 		return list;
 	}
 
-
 	public BusLine getLineById(String lineId) {
 		// Get all the requested line
-		return busLinesRepository.findOne(lineId);
+		lineCached =  busLinesRepository.findOne(lineId);
+		busStopsCache = new ArrayList<BusStop>();
+		// the stops will be used, initialize them now
+		Hibernate.initialize(lineCached.getStops());
+		for (BusStop busStop : lineCached.getStops()) {
+			busStopsCache.add(busStop);
+			// the lines in this bus stop will be used, initialize now
+			Hibernate.initialize(busStop.getLines());
+		}
+		return lineCached;
 	}
 }
