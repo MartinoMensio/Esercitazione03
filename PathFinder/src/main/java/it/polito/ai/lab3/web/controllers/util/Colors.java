@@ -12,14 +12,14 @@ public class Colors {
 	
 	private Colors() {
 		// Fill the array with colors
-		colorsArray.add(colorToHexString(Color.ORANGE));
-		colorsArray.add(colorToHexString(Color.BLUE));
-		colorsArray.add(colorToHexString(Color.GREEN));
-		colorsArray.add(colorToHexString(Color.RED));
-		colorsArray.add(colorToHexString(Color.YELLOW));
-		colorsArray.add(colorToHexString(Color.CYAN));
-		colorsArray.add(colorToHexString(Color.GRAY));
-		colorsArray.add(colorToHexString(Color.MAGENTA));
+		colorsArray.add(0 ,colorToHexString(Color.ORANGE));
+		colorsArray.add(1 ,colorToHexString(Color.BLUE));
+		colorsArray.add(2 ,colorToHexString(Color.GREEN));
+		colorsArray.add(3 ,colorToHexString(Color.RED));
+		colorsArray.add(4 ,colorToHexString(Color.YELLOW));
+		colorsArray.add(5 ,colorToHexString(Color.CYAN));
+		colorsArray.add(6 ,colorToHexString(Color.GRAY));
+		colorsArray.add(7 ,colorToHexString(Color.MAGENTA));
 				
 		index = 0;
 		size = colorsArray.size();
