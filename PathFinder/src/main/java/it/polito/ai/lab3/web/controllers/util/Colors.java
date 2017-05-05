@@ -7,14 +7,16 @@ import java.util.List;
 public class Colors {
 	private static Colors colors;
 	private List<String> colorsArray = new ArrayList<String>();
-	private int index;
+	private static int index;
 	private int size;
 	
 	private Colors() {
 		// Fill the array with colors
 		colorsArray.add(colorToHexString(Color.ORANGE));
-		colorsArray.add(colorToHexString(Color.CYAN));
+		colorsArray.add(colorToHexString(Color.BLUE));
 		colorsArray.add(colorToHexString(Color.GREEN));
+		colorsArray.add(colorToHexString(Color.RED));
+		colorsArray.add(colorToHexString(Color.YELLOW));
 		colorsArray.add(colorToHexString(Color.CYAN));
 		colorsArray.add(colorToHexString(Color.GRAY));
 		colorsArray.add(colorToHexString(Color.MAGENTA));
@@ -23,7 +25,9 @@ public class Colors {
 		size = colorsArray.size();
 	}
 	
-	public static Colors getInstance() {
+	public static Colors newInstance() {
+		index = 0;
+		
 		if (colors == null)
 			colors = new Colors();
 		

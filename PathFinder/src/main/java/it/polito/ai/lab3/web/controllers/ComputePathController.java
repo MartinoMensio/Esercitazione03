@@ -102,7 +102,7 @@ public class ComputePathController {
 	private String pathSegmentsToGeoJson(Point start, List<PathSegment> segments, Point end) {
 		FeaturesCollection collection = FeaturesCollection.newFeaturesCollection();
 		JSONArray firsSegCoordinates = new JSONArray();
-		Colors colors = Colors.getInstance();
+		Colors colors = Colors.newInstance();
 
 		// Add the first segment
 		JSONArray firstSegmentStart = new JSONArray();
