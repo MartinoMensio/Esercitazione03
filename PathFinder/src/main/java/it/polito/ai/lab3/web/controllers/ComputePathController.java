@@ -91,10 +91,18 @@ public class ComputePathController {
 		// Create the feature for the src point marker
 		JSONObject srcPointFeature = createPointFeature(src.getLat(), src.getLng());
 		collection.addFeature(srcPointFeature);
+		
+		JSONObject srcProperties = new JSONObject();
+		srcProperties.put("popupContent", "Punto di partenza");
+		srcPointFeature.put("properties", srcProperties);
 
 		// Create the feature for the dst point marker
 		JSONObject dstPointFeature = createPointFeature(dst.getLat(), dst.getLng());
 		collection.addFeature(dstPointFeature);
+		
+		JSONObject dstProperties = new JSONObject();
+		dstProperties.put("popupContent", "Punto di arrivo");
+		dstPointFeature.put("properties", dstProperties);
 
 		return collection.getGeoJson();
 	}

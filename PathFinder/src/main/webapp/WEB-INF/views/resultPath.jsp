@@ -23,6 +23,8 @@
 	<jsp:body>
 	    <div>
 	    	<h1>Miglior percorso trovato</h1>
+	    	
+	    	<h4>Cliccare sui marker per uteriori informazioni sul percorso</h4>
 	    	<div id="mapid" style="width: 100%; height: 400px;"></div>
 
             <c:choose>
@@ -67,8 +69,10 @@
 		    	}).addTo(mymap);
 
                 // Create the points
-                var stopsLayer = L.geoJSON(srcDstPoints)
-                stopsLayer.addTo(mymap);
+                var stopsLayer = L.geoJSON(srcDstPoints, {
+                    onEachFeature: onEachFeature
+                }).addTo(mymap);
+
                 
                 if (path != null) {
 	                // Draw the paths if there is one
@@ -78,7 +82,6 @@
 	                    },
 	                    onEachFeature: onEachFeature
 	                }).addTo(mymap);
-	                pathLayer.addTo(mymap);
 	                
 	                mymap.fitBounds(pathLayer.getBounds());
                 }

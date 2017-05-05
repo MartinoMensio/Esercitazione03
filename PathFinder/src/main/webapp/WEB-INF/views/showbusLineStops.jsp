@@ -19,6 +19,7 @@
 	<jsp:body>
         <div>
             <h1>Percorso della linea ${lineName}</h1>
+            <h4>Cliccare sui marker per visualizzare i dettagli di ogni fermata</h4>
             
             <div id="mapid" style="width: 100%; height: 400px;"></div>
 
