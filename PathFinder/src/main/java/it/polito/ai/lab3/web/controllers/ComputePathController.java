@@ -26,6 +26,7 @@ import it.polito.ai.lab3.services.routing.Path;
 import it.polito.ai.lab3.services.routing.PathSegment;
 import it.polito.ai.lab3.services.routing.Point;
 import it.polito.ai.lab3.services.routing.RoutingService;
+import it.polito.ai.lab3.web.controllers.util.Colors;
 import it.polito.ai.lab3.web.controllers.util.FeaturesCollection;
 import it.polito.ai.lab3.web.forms.SrcDstPointsForm;
 
@@ -72,7 +73,6 @@ public class ComputePathController {
 			ras.addFlashAttribute("fullPathInfo", path);
 		}
 		else {
-			// TODO
 			ras.addFlashAttribute("srcDstPoints", "");
 			ras.addFlashAttribute("path", "");
 			ras.addFlashAttribute("fullPathInfo", "");
@@ -101,21 +101,42 @@ public class ComputePathController {
 
 	private String pathSegmentsToGeoJson(Point start, List<PathSegment> segments, Point end) {
 		FeaturesCollection collection = FeaturesCollection.newFeaturesCollection();
-		JSONArray coordinates = new JSONArray();
+		JSONArray firsSegCoordinates = new JSONArray();
+		Colors colors = Colors.getInstance();
 
 		// Add the first segment
 		JSONArray firstSegmentStart = new JSONArray();
 		firstSegmentStart.put(start.getLng());
 		firstSegmentStart.put(start.getLat());
-		coordinates.put(firstSegmentStart);
+		firsSegCoordinates.put(firstSegmentStart);
 
 		JSONArray firstSegmentEnd = new JSONArray();
 		firstSegmentEnd.put(segments.get(0).getSource().getLongitude());
 		firstSegmentEnd.put(segments.get(0).getSource().getLatitude());
-		coordinates.put(firstSegmentEnd);
+		firsSegCoordinates.put(firstSegmentEnd);
+		
+		JSONObject firstSegGeometry = new JSONObject();
+		firstSegGeometry.put("type", "LineString");
+		firstSegGeometry.put("coordinates", firsSegCoordinates);
+		
+		// Create and fill up the feature object
+		JSONObject firstFeature = new JSONObject();
+		firstFeature.put("type", "Feature");
+		firstFeature.put("geometry", firstSegGeometry);
+		
+		// Set the line style
+		JSONObject firstLineStyle = new JSONObject();
+		firstLineStyle.put("color", colors.getNextColor());
+		firstLineStyle.put("weight", 5);
+		firstLineStyle.put("opacity", 0.65);
+		firstFeature.put("style", firstLineStyle);
+		
+		collection.addFeature(firstFeature);
 
 		// Add the intermediate segments
 		for (PathSegment p: segments) {
+			JSONArray coordinates = new JSONArray();
+			
 			// Create the segment from start point of the segment to its end
 			if (p.getLine() != null) {
 				// this is a bus PathSegment
@@ -138,7 +159,6 @@ public class ComputePathController {
 				coordinates.put(segmentEnd);
 			}
 			
-
 			JSONObject geometry = new JSONObject();
 			geometry.put("type", "LineString");
 			geometry.put("coordinates", coordinates);
@@ -147,7 +167,14 @@ public class ComputePathController {
 			JSONObject feature = new JSONObject();
 			feature.put("type", "Feature");
 			feature.put("geometry", geometry);
-
+			
+			// Set the line style
+			JSONObject LineStyle = new JSONObject();
+			LineStyle.put("color", colors.getNextColor());
+			LineStyle.put("weight", 5);
+			LineStyle.put("opacity", 0.65);
+			feature.put("style", LineStyle);
+			
 			collection.addFeature(feature);
 
 			// Create the markers features at the start and  at the end of the segment 
@@ -179,15 +206,35 @@ public class ComputePathController {
 		collection.addFeature(lastMarker);
 
 		// Add the last segment
+		JSONArray lastSegCoordinates = new JSONArray();
+		
 		JSONArray lastSegmentStart = new JSONArray();
 		lastSegmentStart.put(lastSegment.getDestination().getLongitude());
 		lastSegmentStart.put(lastSegment.getDestination().getLatitude());
-		coordinates.put(lastSegmentStart);
+		lastSegCoordinates.put(lastSegmentStart);
 
 		JSONArray lastSegmentEnd = new JSONArray();
 		lastSegmentEnd.put(end.getLng());
 		lastSegmentEnd.put(end.getLat());
-		coordinates.put(lastSegmentEnd);
+		lastSegCoordinates.put(lastSegmentEnd);
+		
+		JSONObject lastSegGeometry = new JSONObject();
+		lastSegGeometry.put("type", "LineString");
+		lastSegGeometry.put("coordinates", lastSegCoordinates);
+		
+		// Create and fill up the feature object
+		JSONObject lastFeature = new JSONObject();
+		lastFeature.put("type", "Feature");
+		lastFeature.put("geometry", lastSegGeometry);
+		
+		// Set the line style
+		JSONObject lastLineStyle = new JSONObject();
+		lastLineStyle.put("color", colors.getNextColor());
+		lastLineStyle.put("weight", 5);
+		lastLineStyle.put("opacity", 0.65);
+		lastFeature.put("style", firstLineStyle);
+		
+		collection.addFeature(lastFeature);
 
 		return collection.getGeoJson();
 	}

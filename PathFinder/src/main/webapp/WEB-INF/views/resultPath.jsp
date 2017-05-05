@@ -73,7 +73,9 @@
                 if (path != null) {
 	                // Draw the paths if there is one
 	                var pathLayer = L.geoJSON(path, {
-	                    style: lineStyle,
+	                    style: function(feature) {
+	                    	return feature.style;
+	                    },
 	                    onEachFeature: onEachFeature
 	                }).addTo(mymap);
 	                pathLayer.addTo(mymap);
