@@ -78,7 +78,7 @@
 	                }).addTo(mymap);
 	                pathLayer.addTo(mymap);
 	                
-	                mymap.fitBounds(layer.getBounds());
+	                mymap.fitBounds(pathLayer.getBounds());
                 }
             </script>
         </div>
