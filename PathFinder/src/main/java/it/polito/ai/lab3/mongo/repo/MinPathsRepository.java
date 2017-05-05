@@ -22,7 +22,6 @@ public class MinPathsRepository implements MongoRepository<MinPath, Long>{
 	@Autowired MongoTemplate mongoTemplate;
 	
 	public List<MinPath> myCustomFind(String idSource, String idDestination) {
-
 		Key key = new Key();
 		key.setSrc(idSource);
 		key.setDst(idDestination);

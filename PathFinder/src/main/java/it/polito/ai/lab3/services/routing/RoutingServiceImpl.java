@@ -33,19 +33,21 @@ public class RoutingServiceImpl implements RoutingService {
 		String srcPosition = "SRID=4326;POINT(" + srcLat + " " + srcLng + ")";
 		String dstPosition = "SRID=4326;POINT(" + dstLat + " " + dstLng + ")";
 		
+		// Trova le fermate vicino al punto di partenza selezionato dall'utente
 		List<BusStopGeographic> stopsNearSrc = busStopsGeoRepository.findByDistance(srcPosition, 250.0);
 		System.out.println("Fermate vicino punto partenza:");
 		for (BusStopGeographic b : stopsNearSrc) {
 			System.out.println(b.getId() + " - " + b.getName());
 		}
 		
+		// Trova le fermate vicino al punto di arrivo selezionato dall'utente
 		List<BusStopGeographic> stopsNearDst = busStopsGeoRepository.findByDistance(dstPosition, 250.0);
 		System.out.println("Fermate vicino punto arrivo:");
 		for (BusStopGeographic b : stopsNearDst) {
 			System.out.println(b.getId() + " - " + b.getName());
 		}
 		
-		// Prendo tutti i persocrsi minimi tra tutte le source e  tutte le destination
+		// Trova tutti i persocrsi minimi tra tutte le fermate di partenza e tutte le fermate di arrivo
 		List<MinPath> minPaths = new ArrayList<MinPath>();
 		System.out.println("Calcolo del percorso più veloce:");
 		for (BusStopGeographic idSource : stopsNearSrc) {
@@ -54,32 +56,31 @@ public class RoutingServiceImpl implements RoutingService {
 				minPaths.addAll(minPaths2);
 			}
 		}
-	
+
 		System.out.println("found paths " + minPaths.size());
 		
-		// find the minimum
+		// Trova il percorso minimo tra i vari percorsi brevi calcolati
 		MinPath bestPath = null;
 		for (MinPath p : minPaths) {
 			if (bestPath == null || p.getTotalCost() < bestPath.getTotalCost()) {
 				bestPath = p;
 			}
 		}
-		if (bestPath == null) {
-			// no path found
+		if (bestPath == null) 
 			return null;
-		}
+		
 		System.out.println("Best: " + bestPath.getIdSource() + " --> " + bestPath.getIdDestination() + " : " + bestPath.getTotalCost());
 		
 		List<PathSegment> segments = new ArrayList<PathSegment>();
 		for (Edge e : bestPath.getEdges()) {
-			
 			BusStop source = busStopsRepository.findOne(e.getIdSource());
 			BusStop destination = busStopsRepository.findOne(e.getIdDestination());
 			List<BusStop> intermediateStops = new ArrayList<BusStop>();
-			// TODO get the intermediate stops (not yet stored in mongo
+			// TODO get the intermediate stops (not yet stored in MongoDB)
 			PathSegmentImpl segment = new PathSegmentImpl(source, destination, e.getLineId(), intermediateStops);
 			segments.add(segment);
 		}
+		
 		Point src = new Point(Double.parseDouble(srcLat), Double.parseDouble(srcLng));
 		Point dst = new Point(Double.parseDouble(dstLat), Double.parseDouble(dstLng));
 		

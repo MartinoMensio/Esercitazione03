@@ -8,6 +8,7 @@ import com.vividsolutions.jts.geom.Geometry;
 
 @Entity
 public class BusStopGeographic {
+	
 	@Id
 	private String id;
 	private String name;

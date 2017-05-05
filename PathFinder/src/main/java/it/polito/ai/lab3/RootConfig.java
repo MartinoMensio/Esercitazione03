@@ -30,22 +30,22 @@ import it.polito.ai.lab3.services.buslinesviewer.BusLinesViewerServiceImpl;
 import it.polito.ai.lab3.services.routing.RoutingService;
 import it.polito.ai.lab3.services.routing.RoutingServiceImpl;
 
-@Configuration
-@EnableMongoRepositories({"it.polito.ai.lab3.mongo.repo"})
-@EnableJpaRepositories(basePackages = "it.polito.ai.lab3.repo")
-@ComponentScan(basePackages={"it.polito.ai.lab3.service"})
+@Configuration // Indica che la classe ha lo scopo di definire bean
+@EnableMongoRepositories({"it.polito.ai.lab3.mongo.repo"}) // Supporto per MongoDB
+@EnableJpaRepositories(basePackages = "it.polito.ai.lab3.repo") // Supporto per ORM conforme a JPA
+@ComponentScan(basePackages={"it.polito.ai.lab3.service"}) // Indica dove in quale package vanno cercati i componenti
 public class RootConfig {
 	// TODO define beans
 	@Bean
 	public RoutingService routingService(){
 		return new RoutingServiceImpl();
 	}
-	
+
 	@Bean 
 	public BusLinesViewerService busLinesViewerService() {
 		return new BusLinesViewerServiceImpl();
 	}
-	
+
 	// TODO this should not be there, autowiring should discover it
 	@Bean 
 	public MinPathsRepository minPathsRepository() {
@@ -94,39 +94,21 @@ public class RootConfig {
 		return txManager;
 	}
 
-	/**
-	 * DB connection Factory
-	 * 
-	 * @return a ready to use MongoDbFactory
-	 */
 	@Bean
-	public MongoDbFactory mongoDbFactory() throws Exception {
-		
+	public MongoDbFactory mongoDbFactory() throws Exception {	
 		String databaseName = "ai";
 		String mongoHost = "localhost";
-		int mongoPort = 27017;
-		
-	    // Mongo Client
+		int mongoPort = 27017;	
+		// Mongo Client
 		MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
-
-	    // Mongo DB Factory
-	    SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(
-	            mongoClient, databaseName);
-
-	    return simpleMongoDbFactory;
+		// Mongo DB Factory
+		SimpleMongoDbFactory simpleMongoDbFactory = new SimpleMongoDbFactory(mongoClient, databaseName);
+		return simpleMongoDbFactory;
 	}
-	
+
 	@Bean
 	public MongoTemplate mongoTemplate() throws Exception {
-	    return new MongoTemplate(mongoDbFactory());
+		return new MongoTemplate(mongoDbFactory());
 	}
-	
-	/*@SuppressWarnings("deprecation")
-	public @Bean Mongo mongo() throws Exception {      
-		return new Mongo("localhost");  
-	  } 
-	 public @Bean MongoTemplate mongoTemplate() throws Exception{     
-	 	return new MongoTemplate(mongo(), "ai");  
-	 }*/
 
 }

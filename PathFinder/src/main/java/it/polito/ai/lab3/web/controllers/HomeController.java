@@ -1,11 +1,9 @@
 package it.polito.ai.lab3.web.controllers;
 
-import java.util.*;
-
-import org.springframework.beans.factory.annotation.*;
-import org.springframework.stereotype.*;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 
 
 @Controller

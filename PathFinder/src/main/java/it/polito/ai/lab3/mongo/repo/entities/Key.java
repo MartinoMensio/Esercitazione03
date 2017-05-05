@@ -4,6 +4,8 @@ import java.io.Serializable;
 
 import javax.persistence.Embeddable;
 
+//TODO Adding suppress warning for Key
+@SuppressWarnings("serial")
 @Embeddable
 public class Key implements Serializable {
 	private String src;

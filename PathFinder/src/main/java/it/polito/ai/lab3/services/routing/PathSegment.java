@@ -12,7 +12,7 @@ public interface PathSegment {
 	
 	public String getLine();
 	
-	// le bus stop a cui non scendo
+	// Lista dei bus stop in cui non è prevista la discesa
 	public List<BusStop> getIntermediateStops();
 
 }

@@ -7,12 +7,12 @@ public class PathImpl implements Path {
 	private Point destination;
 	private List<PathSegment> pathSegments;
 	
+	
 	public PathImpl(Point source, Point destination, List<PathSegment> segments) {
 		this.source = source;
 		this.destination = destination;
 		pathSegments = segments;
 	}
-	
 	
 	public Point getSource() {
 		return source;

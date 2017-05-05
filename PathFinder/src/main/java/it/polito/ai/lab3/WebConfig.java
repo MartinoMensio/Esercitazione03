@@ -9,13 +9,12 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
-@EnableWebMvc
+@EnableWebMvc //abilita Sptring MVC, crea il Dispatcher Servlet
 @ComponentScan(basePackages={"it.polito.ai.lab3.web"})
 public class WebConfig extends WebMvcConfigurerAdapter {
-	// TODO
+
 	@Bean
 	public ViewResolver viewResolver() {
-		// TODO
 		InternalResourceViewResolver resolver = new InternalResourceViewResolver();
 		resolver.setPrefix("WEB-INF/views/");
 		resolver.setSuffix(".jsp");

@@ -14,6 +14,7 @@ import it.polito.ai.lab3.services.buslinesviewer.BusLinesViewerService;
 @Controller
 @RequestMapping("/busLinesList")
 public class busLinesListController {
+	
 	@Autowired
 	private BusLinesViewerService busLinesViewerService;
 	
@@ -22,7 +23,7 @@ public class busLinesListController {
 	public String showBusLinesList(ModelMap model) {
 		List<BusLine> busLines = busLinesViewerService.getAllLines();
 		
-		// set the bus lines list into the model
+		// Set the bus lines list into the model
 		model.addAttribute("busLines", busLines);
 		return "busLinesList";
 	}

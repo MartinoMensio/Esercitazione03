@@ -10,9 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import it.polito.ai.lab3.repo.BusLinesRepository;
-import it.polito.ai.lab3.repo.BusStopsRepository;
 import it.polito.ai.lab3.repo.entities.BusLine;
-import it.polito.ai.lab3.repo.entities.BusStop;
 
 @Service
 @Transactional
