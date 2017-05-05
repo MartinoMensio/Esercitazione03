@@ -37,7 +37,7 @@ import it.polito.ai.lab3.services.routing.RoutingServiceImpl;
 @ComponentScan(basePackages={"it.polito.ai.lab3.service"}) // Indica dove in quale package vanno cercati i componenti
 @EnableTransactionManagement
 public class RootConfig {
-	// TODO define beans
+
 	@Bean
 	public RoutingService routingService(){
 		return new RoutingServiceImpl();
