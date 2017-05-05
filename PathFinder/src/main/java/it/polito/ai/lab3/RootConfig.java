@@ -99,7 +99,16 @@ public class RootConfig {
 	@Bean
 	public MongoDbFactory mongoDbFactory() throws Exception {	
 		String databaseName = "ai";
-		String mongoHost = "localhost";
+		String server;
+		try {
+			List<String> lines = Files.readAllLines(Paths.get(
+					RootConfig.class.getClassLoader().getResource("db_ip.txt").toURI().toString().substring(6)));
+			server = lines.get(0);
+		} catch (Exception e) {
+			server = "localhost";
+		}
+
+		String mongoHost = server;
 		int mongoPort = 27017;	
 		// Mongo Client
 		MongoClient mongoClient = new MongoClient(mongoHost, mongoPort);
