@@ -112,8 +112,8 @@
 	        <form:hidden id="srcLng" path="srcLng"/>
 	        <form:hidden id="dstLat" path="dstLat"/>
 	        <form:hidden id="dstLng" path="dstLng"/>
-	        <form:button onclick="return submitForm(this.form);">Calcola percorso</form:button>
-	        <form:button onclick="return resetForm();">Cancella</form:button>
+	        <form:button class="btn btn-primary" onclick="return submitForm(this.form);">Calcola percorso</form:button>
+	        <form:button class="btn" onclick="return resetForm();">Cancella</form:button>
         </form:form>
     </jsp:body>
 </t:template>
