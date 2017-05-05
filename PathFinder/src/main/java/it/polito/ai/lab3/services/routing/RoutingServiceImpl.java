@@ -52,8 +52,8 @@ public class RoutingServiceImpl implements RoutingService {
 		System.out.println("Calcolo del percorso più veloce:");
 		for (BusStopGeographic idSource : stopsNearSrc) {
 			for (BusStopGeographic idDestination : stopsNearDst) {
-				List<MinPath> minPaths2 = minPathsRepository.myCustomFind(idSource.getId(), idDestination.getId());
-				minPaths.addAll(minPaths2);
+				MinPath minPath = minPathsRepository.findMinPath(idSource.getId(), idDestination.getId());
+				minPaths.add(minPath);
 			}
 		}
 

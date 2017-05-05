@@ -17,122 +17,20 @@ import it.polito.ai.lab3.mongo.repo.entities.Key;
 import it.polito.ai.lab3.mongo.repo.entities.MinPath;
 
 @Repository
-public class MinPathsRepository implements MongoRepository<MinPath, Long>{
+public class MinPathsRepository {
 
 	@Autowired MongoTemplate mongoTemplate;
 	
-	public List<MinPath> myCustomFind(String idSource, String idDestination) {
+	public MinPath findMinPath(String idSource, String idDestination) {
 		Key key = new Key();
 		key.setSrc(idSource);
 		key.setDst(idDestination);
 		Query q = new Query(Criteria.where("_id").is(key));
 		List<MinPath> l = mongoTemplate.find(q, MinPath.class);
-		return l;
-	} 
-	
-	public Page<MinPath> findAll(Pageable arg0) {
-		// TODO Auto-generated method stub
-		return null;
+		if (l.isEmpty()) {
+			return null;
+		} else {
+			return l.get(0);
+		}
 	}
-
-	public long count() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public void delete(Long arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void delete(MinPath arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void delete(Iterable<? extends MinPath> arg0) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void deleteAll() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public boolean exists(Long arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public Iterable<MinPath> findAll(Iterable<Long> arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public MinPath findOne(Long arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> S save(S arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> long count(Example<S> arg0) {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	public <S extends MinPath> boolean exists(Example<S> arg0) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	public <S extends MinPath> Page<S> findAll(Example<S> arg0, Pageable arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> S findOne(Example<S> arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<MinPath> findAll() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public List<MinPath> findAll(Sort arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> List<S> findAll(Example<S> arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> List<S> findAll(Example<S> arg0, Sort arg1) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> S insert(S arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> List<S> insert(Iterable<S> arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	public <S extends MinPath> List<S> save(Iterable<S> arg0) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
 }
