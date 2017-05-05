@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import it.polito.ai.lab3.repo.entities.BusStop;
 import it.polito.ai.lab3.services.routing.Path;
 import it.polito.ai.lab3.services.routing.PathSegment;
 import it.polito.ai.lab3.services.routing.Point;
@@ -116,15 +117,27 @@ public class ComputePathController {
 		// Add the intermediate segments
 		for (PathSegment p: segments) {
 			// Create the segment from start point of the segment to its end
-			JSONArray segmentStart = new JSONArray();
-			segmentStart.put(p.getSource().getLongitude());
-			segmentStart.put(p.getSource().getLatitude());
-			coordinates.put(segmentStart);
+			if (p.getLine() != null) {
+				// this is a bus PathSegment
+				for (BusStop busStop : p.getIntermediateStops()) {
+					JSONArray segmentIntermediate = new JSONArray();
+					segmentIntermediate.put(busStop.getLongitude());
+					segmentIntermediate.put(busStop.getLatitude());
+					coordinates.put(segmentIntermediate);
+				}
+			} else {
+				// this is a walk PathSegment
+				JSONArray segmentStart = new JSONArray();
+				segmentStart.put(p.getSource().getLongitude());
+				segmentStart.put(p.getSource().getLatitude());
+				coordinates.put(segmentStart);
 
-			JSONArray segmentEnd = new JSONArray();
-			segmentEnd.put(p.getDestination().getLongitude());
-			segmentEnd.put(p.getDestination().getLatitude());
-			coordinates.put(segmentEnd);
+				JSONArray segmentEnd = new JSONArray();
+				segmentEnd.put(p.getDestination().getLongitude());
+				segmentEnd.put(p.getDestination().getLatitude());
+				coordinates.put(segmentEnd);
+			}
+			
 
 			JSONObject geometry = new JSONObject();
 			geometry.put("type", "LineString");
