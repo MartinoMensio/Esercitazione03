@@ -27,7 +27,7 @@ foreach busStop in busStops:
 
 foreach busStop in busStops:
   min_paths = dijkstra from busStop
-  save min_path in mongo
+  save min_paths in mongo
 ```
 
 ### Read the list of BusStop
@@ -78,7 +78,9 @@ WHERE lineId=? AND sequenceNumber>=? AND sequenceNumber<=?
 
 ## Dijkstra
 
-TODO documentation
+Dijkstra runs on the set of edges found with the two strategies. The walking edges are edges identified by source and destination, while the bus edges begin from the station where users take the bus to the station where they go down: they contain also informations on the intermediate stops that occurr between the two ends.
+
+Dijkstra then for each node computes the minimum path towards every destination node.
 
 ## Inserting in mongoDB
 
