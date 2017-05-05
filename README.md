@@ -30,3 +30,10 @@ docker ps
 ```
 
 Dopo che è stato creato il container, per i successivi avvii è sufficiente gestirne il ciclo di vita con i comandi `docker start mongodb` e `docker stop mongodb`.
+
+### Generazione dei dati per l'applicazione web
+
+Per eseguire l'applicazione è necessario generare i dati:
+
+- eseguire il progetto `PostGisDBCreator` per generare la versione geografica della tabella `BusLineStop` in postgis
+- eseguire il progetto `MinPathCalc` per generare la collection di mongo

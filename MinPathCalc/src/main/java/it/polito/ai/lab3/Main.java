@@ -72,8 +72,8 @@ public class Main {
 
 		Dijsktra dijkstra = new Dijsktra(graph);
 
-		System.out.println("Going to run Dijkstra from each node (should take around 25 min)...");
-		
+		System.out.println("Going to run Dijkstra from each node (should take around 1 hour)...");
+
 		MongoWriter mongoWriter = new MongoWriter();
 
 		// work with the data collected
