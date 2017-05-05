@@ -76,7 +76,13 @@ public class RoutingServiceImpl implements RoutingService {
 			BusStop source = busStopsRepository.findOne(e.getIdSource());
 			BusStop destination = busStopsRepository.findOne(e.getIdDestination());
 			List<BusStop> intermediateStops = new ArrayList<BusStop>();
-			// TODO get the intermediate stops (not yet stored in MongoDB)
+			// get the intermediate stops if the edge is by bus
+			if (e.getStopsId() != null) {
+				for (String stopId : e.getStopsId()) {
+					BusStop busStop = busStopsRepository.findOne(stopId);
+					intermediateStops.add(busStop);
+				}
+			}
 			PathSegmentImpl segment = new PathSegmentImpl(source, destination, e.getLineId(), intermediateStops);
 			segments.add(segment);
 		}

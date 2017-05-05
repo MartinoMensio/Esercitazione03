@@ -1,5 +1,7 @@
 package it.polito.ai.lab3.mongo.repo.entities;
 
+import java.util.List;
+
 import org.bson.types.ObjectId;
 import org.springframework.data.annotation.Id;
 
@@ -12,7 +14,14 @@ public class Edge {
 	private int cost;
 	private String lineId;
 	
+	private List<String> stopsId;
 	
+	public List<String> getStopsId() {
+		return stopsId;
+	}
+	public void setStopsId(List<String> stopsId) {
+		this.stopsId = stopsId;
+	}
 	public ObjectId getId() {
 		return id;
 	}
