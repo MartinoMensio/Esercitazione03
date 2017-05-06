@@ -3,9 +3,6 @@ package it.polito.ai.lab3.mongo.repo.entities;
 import java.io.Serializable;
 import java.util.Objects;
 
-import javax.persistence.Embeddable;
-
-@Embeddable
 public class Key implements Serializable {
 
 	private static final long serialVersionUID = 2083961456275171567L;

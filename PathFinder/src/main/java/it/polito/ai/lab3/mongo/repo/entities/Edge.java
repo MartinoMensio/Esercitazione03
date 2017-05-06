@@ -2,12 +2,7 @@ package it.polito.ai.lab3.mongo.repo.entities;
 
 import java.util.List;
 
-import org.bson.types.ObjectId;
-import org.springframework.data.annotation.Id;
-
 public class Edge {
-	@Id
-	private ObjectId id;
 	private String idSource;
 	private String idDestination;
 	private boolean mode;
@@ -21,12 +16,6 @@ public class Edge {
 	}
 	public void setStopsId(List<String> stopsId) {
 		this.stopsId = stopsId;
-	}
-	public ObjectId getId() {
-		return id;
-	}
-	public void setId(ObjectId id) {
-		this.id = id;
 	}
 	public String getIdSource() {
 		return idSource;

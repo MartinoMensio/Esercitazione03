@@ -2,13 +2,12 @@ package it.polito.ai.lab3.mongo.repo.entities;
 
 import java.util.List;
 
-import javax.persistence.EmbeddedId;
-
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document(collection = "min_paths")
 public class MinPath {
-	@EmbeddedId
+	@Id
 	private Key id;
 	private String idSource;
 	private String idDestination;
